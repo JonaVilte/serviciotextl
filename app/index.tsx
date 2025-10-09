@@ -1,89 +1,54 @@
-import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icon';
-import { Text } from '@/components/ui/text';
-import { THEME } from '@/lib/theme';
-import { Link, Stack } from 'expo-router';
-import { MoonStarIcon, StarIcon, SunIcon } from 'lucide-react-native';
-import { useColorScheme } from 'nativewind';
-import * as React from 'react';
-import { Image, type ImageStyle, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+// Asumo ScrollView de React Native o View/ScrollView si estás usando Next.js/Expo Web
+import { ScrollView, View, Text } from 'react-native'; 
+import { supabase } from '@/lib/supabaseClient';
 
-const LOGO = {
-  light: require('@/assets/images/react-native-reusables-light.png'),
-  dark: require('@/assets/images/react-native-reusables-dark.png'),
-};
+// Asegúrate que la ruta de importación sea correcta según tu estructura
+import TarjetaParaVisualizarUnPedidoConSupebase from '@/src/pedidos/pedidosConSupebase'; 
 
-const SCREEN_OPTIONS = {
-  light: {
-    title: 'React Native Reusables',
-    headerTransparent: true,
-    headerShadowVisible: true,
-    headerStyle: { backgroundColor: THEME.light.background },
-    headerRight: () => <ThemeToggle />,
-  },
-  dark: {
-    title: 'React Native Reusables',
-    headerTransparent: true,
-    headerShadowVisible: true,
-    headerStyle: { backgroundColor: THEME.dark.background },
-    headerRight: () => <ThemeToggle />,
-  },
-};
+export default function ListaDePedidos() {
+  const [pedidos, setPedidos] = useState<{ id: string | number }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const IMAGE_STYLE: ImageStyle = {
-  height: 76,
-  width: 76,
-};
+  useEffect(() => {
+    const fetchPedidos = async () => {
+      // 1. Solo consultamos los IDs de todos los pedidos (es más ligero)
+      const { data, error } = await supabase
+        .from('pedidos')
+        .select('id')
+        .order('fecha_emision', { ascending: false }); 
 
-export default function Screen() {
-  const { colorScheme } = useColorScheme();
+      if (error) {
+        console.error("Error al obtener la lista de IDs de pedidos:", error);
+      }
+      
+      setPedidos(data || []);
+      setLoading(false);
+    };
+    
+    fetchPedidos();
+  }, []);
 
   return (
-    <>
-      <Stack.Screen options={SCREEN_OPTIONS[colorScheme ?? 'light']} />
-      <View className="flex-1 items-center justify-center gap-8 p-4">
-        <Image source={LOGO[colorScheme ?? 'light']} style={IMAGE_STYLE} resizeMode="contain" />
-        <View className="gap-2 p-4">
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            1. Edit <Text variant="code">app/index.tsx</Text> to get started.
-          </Text>
-          <Text className="ios:text-foreground font-mono text-sm text-muted-foreground">
-            2. Save to see your changes instantly.
-          </Text>
-        </View>
-        <View className="flex-row gap-2">
-          <Link href="https://reactnativereusables.com" asChild>
-            <Button>
-              <Text>Browse the Docs</Text>
-            </Button>
-          </Link>
-          <Link href="https://github.com/founded-labs/react-native-reusables" asChild>
-            <Button variant="ghost">
-              <Text>Star the Repo</Text>
-              <Icon as={StarIcon} />
-            </Button>
-          </Link>
-        </View>
-      </View>
-    </>
-  );
-}
+    <ScrollView style={{ padding: 10, backgroundColor: '#1e1e1e' }}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white', marginBottom: 15 }}>
+        Lista de Pedidos ({pedidos.length})
+      </Text>
+      
+      {loading && <Text style={{ color: '#ccc' }}>Cargando lista de pedidos...</Text>}
+      
+      {/* Si no está cargando y no hay pedidos */}
+      {!loading && pedidos.length === 0 && (
+        <Text style={{ color: '#ccc' }}>No hay pedidos registrados en Supabase.</Text>
+      )}
 
-const THEME_ICONS = {
-  light: SunIcon,
-  dark: MoonStarIcon,
-};
-
-function ThemeToggle() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
-
-  return (
-    <Button
-      onPressIn={toggleColorScheme}
-      size="icon"
-      variant="ghost"
-      className="rounded-full web:mx-4">
-      <Icon as={THEME_ICONS[colorScheme ?? 'light']} className="size-5" />
-    </Button>
+      {/* 2. Iteramos y pasamos el ID a la Tarjeta */}
+      {pedidos.map((p) => (
+        <TarjetaParaVisualizarUnPedidoConSupebase 
+          key={p.id} 
+          pedidoId={p.id} // 👈 ¡Clave! Se pasa el ID a la tarjeta
+        />
+      ))}
+    </ScrollView>
   );
 }
