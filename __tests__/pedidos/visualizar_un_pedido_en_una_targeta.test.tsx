@@ -1,23 +1,25 @@
+import React from 'react';
 import { render } from '@testing-library/react-native';
 
-import TarjetaParaVisualizarUnPedido from '@/src/pedidos';
-import React from 'react';
-import TarjetaParaVisualizarUnPedidoConSupebase from '@/src/pedidos/pedidosConSupebase';
+// 👇 Importamos el mock automáticamente
 
-describe('Registrar pedido - Visualización de Historial - visualizacion de un pedido', () => {
-  test('Que tenga el nombre de la persona que encargo el pedido, el estado, precio y fecha de emicion', () => {
-    const { getByText } = render(
+import TarjetaParaVisualizarUnPedidoConSupebase from '@/src/pedidos/pedidosConSupebase';
+jest.mock('../../lib/__mock__/mockDeSupebase');
+
+describe('Registrar pedido - Visualización de Historial - visualización de un pedido', () => {
+  test('Que tenga el nombre de la persona que encargó el pedido, el estado, precio y fecha de emisión', async () => {
+    const { findByText } = render(
       <TarjetaParaVisualizarUnPedidoConSupebase
-        usuario={{ nombre: "Mario Bargas" }}
-        fecha_de_emision={new Date(1999, 8, 10)}
-        estado_del_pedio={'completado'}
-        precio={2700}
+        usuario={{ nombre: 'Ma' }}
+        fecha_de_emision={new Date(2025, 7, 27)}
+        estado_del_pedio={'en_proceso'}
+        precio={19100}
       />
     );
 
-    expect(getByText('Pedido de Mario Bargas')).toBeVisible();
-    expect(getByText('Fecha de Emicion: 10/09/1999')).toBeVisible();
-    expect(getByText('Estado del Pedido: completado ')).toBeVisible();
-    expect(getByText('Precio del Pedido: $2700')).toBeVisible();
+    expect(await findByText('Pedido de Ma')).toBeVisible();
+    expect(await findByText('Fecha de Emisión: 27/08/2025')).toBeVisible();
+    expect(await findByText('Estado del Pedido: en_proceso')).toBeVisible();
+    expect(await findByText('Precio del Pedido: $19100.00')).toBeVisible();
   });
 });
