@@ -7,22 +7,18 @@ import { Text } from '@/components/ui/text';
 type Props = {
   nombre_del_encargado: string;
   fecha_de_emision: Date;
-  estado_del_pedio: 'completado' | 'en proceso' | 'evaluando';
+  estado_del_pedido: 'completado' | 'en proceso' | 'evaluando';
   precio: number;
 };
 
 const TarjetaParaVisualizarUnPedido = ({
   nombre_del_encargado,
   fecha_de_emision,
-  estado_del_pedio,
+  estado_del_pedido, 
   precio,
 }: Props) => {
   // Formato de la fecha
-  const fechaFormateada = new Date(fecha_de_emision).toLocaleDateString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+
 
 
   return (
@@ -32,15 +28,15 @@ const TarjetaParaVisualizarUnPedido = ({
           Pedido de {nombre_del_encargado}
         </CardTitle>
         <CardDescription className="text-sm text-gray-500">
-          Fecha de Emicion: {fechaFormateada}
+          Fecha de Emisión: {fecha_de_emision.toLocaleString()}
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         <View className="gap-2">
           <Text className="text-base text-gray-700">
-            <Text className="font-semibold">Estado del Pedido:</Text>{' '}
-            <Text className={`capitalize`}>{estado_del_pedio}</Text>
+            <Text className="font-semibold">Estado del Pedido: </Text>{' '}
+            <Text className={`capitalize`}>{estado_del_pedido}</Text>
           </Text>
           <Text className="text-base text-gray-700">
             <Text className="font-semibold">Precio del Pedido:</Text> ${precio}
