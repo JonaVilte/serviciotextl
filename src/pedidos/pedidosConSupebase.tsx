@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { View } from 'react-native';
-import { Text } from '@/components/ui/text';
+"use client";
+
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { supabase } from "@/lib/supabaseClient";
 
 type TarjetaProps = {
   pedidoId?: string | number;
@@ -12,7 +12,6 @@ type TarjetaProps = {
   precio?: number;
 };
 
-// Pedido sigue esperando un único objeto de usuario
 type Pedido = {
   id: string | number;
   fecha_emision: string;
@@ -31,26 +30,31 @@ export default function TarjetaParaVisualizarUnPedidoConSupebase({
   const [pedido, setPedido] = useState<Pedido | null>(
     usuario
       ? {
-          id: pedidoId ?? 'mock-id',
-          fecha_emision: fecha_de_emision?.toString() ?? '',
-          estado: estado_del_pedio ?? '',
+          id: pedidoId ?? "mock-id",
+          fecha_emision: fecha_de_emision?.toString() ?? "",
+          estado: estado_del_pedio ?? "",
           total: precio ?? 0,
-          usuario: usuario,
+          usuario,
         }
       : null
   );
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (!pedidoId) return; // si no hay pedidoId, no busques en supabase
+    if (!pedidoId) return;
+
     async function cargarPedido() {
+      setLoading(true);
       const { data, error } = await supabase
-        .from('pedidos')
-        .select('id, fecha_emision, estado, total, usuario:usuario_id(nombre)')
-        .eq('id', pedidoId)
+        .from("pedidos")
+        .select("id, fecha_emision, estado, total, usuario:usuario_id(nombre)")
+        .eq("id", pedidoId)
         .single();
 
       if (error) {
         console.error(`Error al cargar el pedido con ID ${pedidoId}:`, error);
+        setLoading(false);
         return;
       }
 
@@ -60,53 +64,102 @@ export default function TarjetaParaVisualizarUnPedidoConSupebase({
         fecha_emision: rawData.fecha_emision,
         estado: rawData.estado,
         total: rawData.total,
-        usuario: Array.isArray(rawData.usuario) ? rawData.usuario[0] : rawData.usuario,
+        usuario: Array.isArray(rawData.usuario)
+          ? rawData.usuario[0]
+          : rawData.usuario,
       });
+      setLoading(false);
     }
 
     cargarPedido();
   }, [pedidoId]);
 
-  if (!pedido) {
+  if (loading || !pedido) {
     return (
-      <div
-        style={{
-          padding: 15,
-          margin: 10,
-          backgroundColor: '#333',
-          color: '#fff',
-          borderRadius: 8,
-        }}>
-        Cargando pedido con ID: {pedidoId}...
-      </div>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3b82f6" />
+        <Text style={styles.loadingText}>
+          Cargando pedido con ID: {pedidoId}...
+        </Text>
+      </View>
     );
   }
 
-  const fechaFormateada = new Date(pedido.fecha_emision).toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  const fechaFormateada = new Date(pedido.fecha_emision).toLocaleDateString(
+    "es-ES",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }
+  );
   const totalFormateado = pedido.total.toFixed(2);
 
   return (
-    <Card className="w-full max-w-sm rounded-2xl bg-white shadow-md">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold text-gray-900">
-          Pedido de {pedido.usuario.nombre}{' '}
-        </CardTitle>
-
-        <CardDescription className="text-sm text-gray-500">
+    <View style={styles.card}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Pedido de {pedido.usuario.nombre}</Text>
+        <Text style={styles.subtitle}>
           Fecha de Emisión: {fechaFormateada}
-        </CardDescription>
-      </CardHeader>
+        </Text>
+      </View>
 
-      <CardContent>
-        <View className="gap-2">
-          <Text>Estado del Pedido: {pedido.estado}</Text>
-          <Text>Precio del Pedido: ${totalFormateado}</Text>
-        </View>
-      </CardContent>
-    </Card>
+      <View style={styles.body}>
+        <Text style={styles.text}>
+          Estado del Pedido: {pedido.estado}
+        </Text>
+        <Text style={styles.text}>
+          Precio del Pedido: ${totalFormateado}
+        </Text>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    width: "90%",
+    alignSelf: "center",
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
+    padding: 12,
+  },
+  header: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+    marginBottom: 8,
+    paddingBottom: 6,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#111827",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#4b5563",
+  },
+  body: {
+    marginTop: 6,
+    gap: 6,
+  },
+  text: {
+    fontSize: 15,
+    color: "#374151",
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 30,
+  },
+  loadingText: {
+    marginTop: 8,
+    color: "#6b7280",
+  },
+});
