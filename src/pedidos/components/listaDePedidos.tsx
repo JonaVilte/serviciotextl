@@ -23,8 +23,7 @@ const ListaDePedidos = () => {
       </View>
     );
   }
-  const listaPedidos = pedidos()
-
+  const listaPedidos = pedidos();
 
   if (listaPedidos.length === 0) {
     return (
@@ -41,9 +40,7 @@ const ListaDePedidos = () => {
           <TarjetaParaVisualizarUnPedido
             nombre_del_encargado={pedido.usuario_nombre}
             fecha_de_emision={new Date(pedido.fecha_emision)}
-            estado_del_pedido={
-              pedido.estado as 'completado' | 'en proceso' | 'evaluando'
-            }
+            estado_del_pedido={pedido.estado as 'completado' | 'en proceso' | 'evaluando'}
             precio={pedido.total}
           />
         </View>
