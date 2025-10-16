@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text } from 'react-native'; 
 import { supabase } from '@/lib/supabaseClient';
 
-import TarjetaParaVisualizarUnPedidoConSupebase from '@/src/pedidos/pedidosConSupebase'; 
 import AlertaBajoStock from '@/src/alertaDeStock';
+import ListaDePedidos from '@/src/pedidos/components/listaDePedidos';
 
-export default function ListaDePedidos() {
+export default function MostrarPedidos() {
   const [pedidos, setPedidos] = useState<{ id: string | number }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,16 +30,8 @@ export default function ListaDePedidos() {
         <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white', marginBottom: 15 }}>
           Lista de Pedidos ({pedidos.length})
         </Text>
-
-        {loading && <Text style={{ color: '#ccc' }}>Cargando lista de pedidos...</Text>}
-
-        {!loading && pedidos.length === 0 && (
-          <Text style={{ color: '#ccc' }}>No hay pedidos registrados en Supabase.</Text>
-        )}
-
-        {pedidos.map((p) => (
-          <TarjetaParaVisualizarUnPedidoConSupebase key={p.id} pedidoId={p.id} />
-        ))}
+        <ListaDePedidos/>
+        
       </ScrollView>
 
       <AlertaBajoStock />

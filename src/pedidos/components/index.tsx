@@ -48,9 +48,6 @@ const TarjetaParaVisualizarUnPedido = ({
         <Button variant="outline">
           <Text>Ver Detalles</Text>
         </Button>
-        <Button>
-          <Text>Contactar</Text>
-        </Button>
       </CardFooter>
     </Card>
   );
