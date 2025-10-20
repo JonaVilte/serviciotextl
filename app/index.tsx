@@ -33,7 +33,7 @@ export default function MostrarPedidos() {
         <ListaDePedidos/>
         
       </ScrollView>
-
+    
       <AlertaBajoStock />
     </View>
   );
