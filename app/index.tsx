@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { ScrollView, View, Text } from 'react-native'; 
+import { StyleSheet, View } from 'react-native'; 
 import { supabase } from '@/lib/supabaseClient';
-
+import { Text } from '@/components/ui/text'
 import AlertaBajoStock from '@/src/alertaDeStock';
 import ListaDePedidos from '@/src/pedidos/components/listaDePedidos';
+import ListaDePedidosAdmin from '@/src/pedidos/components/listaDePedidosParaAdm'
 
 export default function MostrarPedidos() {
   const [pedidos, setPedidos] = useState<{ id: string | number }[]>([]);
@@ -25,16 +26,39 @@ export default function MostrarPedidos() {
   }, []);
 
   return (
-    <View style={{ flex: 1, position: 'relative', backgroundColor: '#1e1e1e' }}>
-      <ScrollView style={{ padding: 10 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white', marginBottom: 15 }}>
-          Lista de Pedidos ({pedidos.length})
-        </Text>
-        <ListaDePedidos/>
-        
-      </ScrollView>
-    
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Gestión de Pedidos</Text>
+        <Text style={styles.subtitle}>Sistema de control de ventas textil</Text>
+      </View>
+      <ListaDePedidosAdmin />   
       <AlertaBajoStock />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f9fafb",
+  },
+  header: {
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#6b7280",
+  },
+})
+

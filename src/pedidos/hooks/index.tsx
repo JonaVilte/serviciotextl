@@ -54,7 +54,43 @@ const usarPedidos = () => {
     cargarPedidos();
   }, []);
 
-  return { pedidos: () => pedidos , error, loading };
+   const recargarPedidos = async () => {
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.from("pedidos").select(
+        `
+          id,
+          fecha_emision,
+          estado,
+          total,
+          usuarios (nombre)
+          `,
+      )
+
+      if (error) {
+        console.log("No se pudo recargar los pedidos")
+        cambiarError(true)
+        return
+      }
+
+      const pedidosConNombre = data.map((p: any) => ({
+        id: p.id,
+        fecha_emision: p.fecha_emision,
+        estado: p.estado,
+        total: p.total,
+        usuario_nombre: p.usuarios?.nombre ?? "Desconocido",
+      }))
+
+      cambiarPedidos(pedidosConNombre)
+    } catch (err) {
+      console.error("Error recargando pedidos:", err)
+      cambiarError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { pedidos: () => pedidos , error, loading, recargarPedidos };
 };
 
 export default usarPedidos;

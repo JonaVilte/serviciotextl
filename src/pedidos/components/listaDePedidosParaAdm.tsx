@@ -3,9 +3,10 @@ import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { Text } from '@/components/ui/text';
 import TarjetaParaVisualizarUnPedido from '@/src/pedidos/components/index';
 import usarPedidos from '@/src/pedidos/hooks/index';
+import TarjetaParaEditarPedido from './tarjetaParaEditarPedido';
 
-const ListaDePedidos = () => {
-  const { pedidos, error, loading } = usarPedidos();
+const ListaDePedidosAdmin = () => {
+  const { pedidos, error, loading, recargarPedidos } = usarPedidos();
 
   if (loading) {
     return (
@@ -37,11 +38,14 @@ const ListaDePedidos = () => {
     <ScrollView contentContainerStyle={styles.lista}>
       {listaPedidos.map((pedido) => (
         <View key={pedido.id} style={styles.contenedorTarjeta}>
-          <TarjetaParaVisualizarUnPedido
+          <TarjetaParaEditarPedido
+            pedidoId={pedido.id}
             nombre_del_encargado={pedido.usuario_nombre}
             fecha_de_emision={new Date(pedido.fecha_emision)}
             estado_del_pedido={pedido.estado as 'completado' | 'en_proceso' | 'evaluando'}
             precio={pedido.total}
+            onEstadoActualizado={recargarPedidos}
+
           />
         </View>
       ))}
@@ -82,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListaDePedidos;
+export default ListaDePedidosAdmin;
