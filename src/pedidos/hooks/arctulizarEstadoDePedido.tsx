@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 
-type EstadoPedido = "completado" | "en_proceso" | "evaluando"
+type EstadoPedido = "completado" | "en_proceso" | "evaluando" | "entregado"
 
 interface actualizarEstadoPedidoReturn {
   actualizarEstado: (pedidoId: string, nuevoEstado: EstadoPedido) => Promise<boolean>
@@ -20,6 +20,25 @@ const actualizarEstadoPedido = (): actualizarEstadoPedidoReturn => {
     setError(null)
 
     try {
+        const { data: pedidoActual, error: fetchError } = await supabase
+        .from("pedidos")
+        .select("estado")
+        .eq("id", pedidoId)
+        .single()
+
+      if (fetchError) {
+        console.error("Error al verificar el estado del pedido:", fetchError)
+        setError("No se pudo verificar el estado del pedido")
+        setCargando(false)
+        return false
+      }
+
+      if (pedidoActual?.estado === "entregado") {
+        setError("No se puede editar un pedido que ya fue entregado")
+        setCargando(false)
+        return false
+      }
+
       const { error: updateError } = await supabase
         .from("pedidos")
         .update({
