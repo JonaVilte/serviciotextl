@@ -1,48 +1,53 @@
-import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import ListaDePedidosAdmin from '@/src/pedidos/components/listaDePedidosParaAdm';
+import { Alert } from 'react-native';
+import TarjetaParaEditarPedido from '@/src/pedidos/components/tarjetaParaEditarPedido';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-jest.mock('@/src/pedidos/hooks/index', () => jest.fn());
-
-jest.mock('@/src/pedidos/components/tarjetaParaEditarPedido', () => {
-  const React = require('react');
-  const { Pressable, Text } = require('react-native');
-  return ({ onEstadoActualizado }: any) => (
-    <Pressable testID="boton-actualizar" onPress={onEstadoActualizado}>
-      <Text>Actualizar estado</Text>
-    </Pressable>
-  );
+// Mock del hook que actualiza el estado
+jest.mock('@/src/pedidos/hooks/actulizarEstadoDePedido', () => {
+  return jest.fn(() => ({
+    actualizarEstado: jest.fn(() => Promise.resolve(true)), // simula éxito
+    cargando: false,
+    error: null,
+  }));
 });
 
-import usarPedidos from '@/src/pedidos/hooks/index';
+// Mock de Alert
+jest.spyOn(Alert, 'alert');
 
-describe('ListaDePedidosAdmin', () => {
-  it('permite actualizar el estado del pedido', async () => {
-    const recargarPedidosMock = jest.fn();
+describe('TarjetaParaEditarPedido', () => {
+  test('permite actualizar el estado del pedido exitosamente', async () => {
+    const mockOnEstadoActualizado = jest.fn();
 
-    (usarPedidos as jest.Mock).mockReturnValue({
-      pedidos: () => [
-        {
-          id: '1',
-          usuario_nombre: 'Juan Pérez',
-          fecha_emision: new Date().toISOString(),
-          estado: 'en_proceso',
-          total: 1200,
-        },
-      ],
-      error: null,
-      loading: false,
-      recargarPedidos: recargarPedidosMock,
-    });
+    const { getByTestId, findByTestId } = render(
+      <SafeAreaProvider>
+        <TarjetaParaEditarPedido
+          pedidoId="123"
+          nombre_del_encargado="Carlos"
+          fecha_de_emision={new Date('2025-10-22T10:00:00Z')}
+          estado_del_pedido="en_proceso"
+          precio={250}
+          onEstadoActualizado={mockOnEstadoActualizado}
+        />
+      </SafeAreaProvider>
+    );
 
-    const { getByTestId } = render(<ListaDePedidosAdmin />);
+    const botonEstado = getByTestId('boton-estado-pedido');
+    fireEvent.press(botonEstado);
 
-    const boton = getByTestId('boton-actualizar');
+    const opcionCompletado = await findByTestId('opcion-completado');
+    fireEvent.press(opcionCompletado);
 
-    fireEvent.press(boton);
-
+    // Verificar que se muestra un alert de éxito
     await waitFor(() => {
-      expect(recargarPedidosMock).toHaveBeenCalledTimes(1);
+      expect(Alert.alert).toHaveBeenCalledWith(
+        '¡Éxito!',
+        expect.stringContaining('completado'),
+        expect.any(Array)
+      );
     });
+
+    // Verificar que se llamó el callback de actualización
+    expect(mockOnEstadoActualizado).toHaveBeenCalled();
   });
 });

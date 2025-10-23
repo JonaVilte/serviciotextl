@@ -28,7 +28,7 @@ const ListaDePedidos = () => {
   if (listaPedidos.length === 0) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.textoVacio}>No hay pedidos registrados.</Text>
+        <Text style={styles.textoVacio}>No hay pedidos registrados</Text>
       </View>
     );
   }
@@ -40,7 +40,9 @@ const ListaDePedidos = () => {
           <TarjetaParaVisualizarUnPedido
             nombre_del_encargado={pedido.usuario_nombre}
             fecha_de_emision={new Date(pedido.fecha_emision)}
-            estado_del_pedido={pedido.estado as 'completado' | 'en_proceso' | 'evaluando' | 'entregado'}
+            estado_del_pedido={
+              pedido.estado as 'completado' | 'en_proceso' | 'evaluando' | 'entregado'
+            }
             precio={pedido.total}
           />
         </View>
