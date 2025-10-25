@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 
-type EstadoPedido = "completado" | "en_proceso" | "evaluando" | "entregado"
+type EstadoPedido = "completado" | "en_proceso" | "pendiente" | "entregado" | 'cancelado'
 
 interface actualizarEstadoPedidoReturn {
   actualizarEstado: (pedidoId: string, nuevoEstado: EstadoPedido) => Promise<boolean>

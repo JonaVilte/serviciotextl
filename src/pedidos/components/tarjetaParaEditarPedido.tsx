@@ -18,7 +18,7 @@ type Props = {
   pedidoId: string;
   nombre_del_encargado: string;
   fecha_de_emision: Date;
-  estado_del_pedido: 'completado' | 'en_proceso' | 'evaluando' | 'entregado';
+  estado_del_pedido: 'completado' | 'en_proceso' | 'pendiente' | 'entregado' | 'cancelado';
   precio: number;
   onEstadoActualizado?: () => void;
 };
@@ -45,7 +45,7 @@ const TarjetaParaEditarPedido = ({
   const pedidoEntregado = estadoActual === 'entregado';
 
   const manejarCambioEstado = async (
-    nuevoEstado: 'completado' | 'en_proceso' | 'evaluando' | 'entregado'
+    nuevoEstado: 'completado' | 'en_proceso' | 'pendiente' | 'entregado' | 'cancelado'
   ) => {
     if (pedidoEntregado) {
       Alert.alert(
@@ -162,30 +162,45 @@ const TarjetaParaEditarPedido = ({
                 className="w-56"
                 align="start">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onPress={() => manejarCambioEstado('evaluando')}>
+                  <DropdownMenuItem 
+                  onPress={() => manejarCambioEstado('pendiente')}                    
+                  testID="opcion-pendiente">
                     <View style={styles.itemMenu}>
                       <View style={[styles.indicadorEstado, { backgroundColor: '#eab308' }]} />
-                      <Text style={styles.textoMenu}>evaluando</Text>
+                      <Text style={styles.textoMenu}>pendiente</Text>
                     </View>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onPress={() => manejarCambioEstado('en_proceso')}>
+                  <DropdownMenuItem 
+                  onPress={() => manejarCambioEstado('en_proceso')}
+                  testID="opcion-en_proceso">
                     <View style={styles.itemMenu}>
                       <View style={[styles.indicadorEstado, { backgroundColor: '#059669' }]} />
                       <Text style={styles.textoMenu}>en proceso</Text>
                     </View>
                   </DropdownMenuItem>
 
+                  <DropdownMenuItem 
+                  onPress={() => manejarCambioEstado('cancelado')}
+                  testID="opcion-cancelado">
+                    <View style={styles.itemMenu}>
+                      <View style={[styles.indicadorEstado, { backgroundColor: '#059669' }]} />
+                      <Text style={styles.textoMenu}>cancelado</Text>
+                    </View>
+                  </DropdownMenuItem>
+
+
                   <DropdownMenuItem
-                    testID="opcion-completado"
-                    onPress={() => manejarCambioEstado('completado')}>
+                    onPress={() => manejarCambioEstado('completado')}
+                    testID="opcion-completado">
                     <View style={styles.itemMenu}>
                       <View style={[styles.indicadorEstado, { backgroundColor: '#059669' }]} />
                       <Text style={styles.textoMenu}>completado</Text>
                     </View>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onPress={() => manejarCambioEstado('entregado')}>
+                  <DropdownMenuItem onPress={() => manejarCambioEstado('entregado')}
+                    testID="opcion-entregado">
                     <View style={styles.itemMenu}>
                       <View style={[styles.indicadorEstado, { backgroundColor: '#4f46e5' }]} />
                       <Text style={styles.textoMenu}>entregado</Text>

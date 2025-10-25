@@ -7,7 +7,7 @@ import { Text } from '@/components/ui/text';
 type Props = {
   nombre_del_encargado: string;
   fecha_de_emision: Date;
-  estado_del_pedido: 'completado' | 'en_proceso' | 'evaluando' | 'entregado';
+  estado_del_pedido: 'completado' | 'en_proceso' | 'pendiente' | 'entregado' | 'cancelado';
   precio: number;
 };
 
