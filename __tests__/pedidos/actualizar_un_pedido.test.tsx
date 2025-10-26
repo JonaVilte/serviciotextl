@@ -43,6 +43,7 @@ describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría 
 
         const { getByTestId } = render(
         <TarjetaParaEditarPedido
+            usuario_id='1'
             pedidoId="123"
             nombre_del_encargado="Carlos"
             fecha_de_emision={new Date('2025-10-22T10:00:00Z')}

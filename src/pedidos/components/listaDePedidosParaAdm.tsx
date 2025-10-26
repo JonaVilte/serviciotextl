@@ -40,12 +40,13 @@ const ListaDePedidosAdmin = () => {
         <View key={pedido.id} style={styles.contenedorTarjeta}>
           <TarjetaParaEditarPedido
             pedidoId={pedido.id}
+            usuario_id={pedido.usuario_id}
             nombre_del_encargado={pedido.usuario_nombre}
             fecha_de_emision={new Date(pedido.fecha_emision)}
-            estado_del_pedido={pedido.estado as 'completado' | 'en_proceso' | 'evaluando' | 'entregado'}
+            estado_del_pedido={pedido.estado as 'completado' | 'en_proceso' | 'cancelado' | 'entregado' | 'pendiente'}
             precio={pedido.total}
             onEstadoActualizado={recargarPedidos}
-
+            onClienteActualizado={recargarPedidos}
           />
         </View>
       ))}
