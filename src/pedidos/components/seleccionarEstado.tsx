@@ -44,13 +44,12 @@ const SelectorEstado = ({ estadoActual, cargando, pedidoEntregado, contentInsets
           {cargando ? (
             <ActivityIndicator size="small" />
           ) : (
-            <View style={styles.filaBadge}>
-              <Text style={[styles.statusText, { color: getStatusColor(estadoActual) }]}>
+
+              <Text style={[styles.statusText, styles.filaBadge, { color: getStatusColor(estadoActual) }]}>
                 {estadoActual === "en_proceso"
                   ? "En Proceso"
                   : estadoActual.charAt(0).toUpperCase() + estadoActual.slice(1)}
               </Text>
-            </View>
           )}
         </TouchableOpacity>
       </DropdownMenuTrigger>
@@ -59,38 +58,23 @@ const SelectorEstado = ({ estadoActual, cargando, pedidoEntregado, contentInsets
         <DropdownMenuContent insets={contentInsets} sideOffset={2} className="w-56" align="start">
           <DropdownMenuGroup>
             <DropdownMenuItem onPress={() => onCambiarEstado("pendiente")} testID="opcion-pendiente">
-              <View style={styles.itemMenu}>
-                <View />
-                <Text style={styles.textoMenu}>pendiente</Text>
-              </View>
+                <Text style={[styles.textoMenu, styles.itemMenu]}>pendiente</Text>
             </DropdownMenuItem>
 
             <DropdownMenuItem onPress={() => onCambiarEstado("en_proceso")} testID="opcion-en_proceso">
-              <View style={styles.itemMenu}>
-                <View />
                 <Text style={styles.textoMenu}>en proceso</Text>
-              </View>
             </DropdownMenuItem>
 
             <DropdownMenuItem onPress={() => onCambiarEstado("cancelado")} testID="opcion-cancelado">
-              <View style={styles.itemMenu}>
-                <View />
                 <Text style={styles.textoMenu}>cancelado</Text>
-              </View>
             </DropdownMenuItem>
 
             <DropdownMenuItem onPress={() => onCambiarEstado("completado")} testID="opcion-completado">
-              <View style={styles.itemMenu}>
-                <View />
                 <Text style={styles.textoMenu}>completado</Text>
-              </View>
             </DropdownMenuItem>
 
             <DropdownMenuItem onPress={() => onCambiarEstado("entregado")} testID="opcion-entregado">
-              <View style={styles.itemMenu}>
-                <View />
                 <Text style={styles.textoMenu}>entregado</Text>
-              </View>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
