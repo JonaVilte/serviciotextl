@@ -1,8 +1,7 @@
 import { useState } from "react"
-import { View, Alert, StyleSheet } from "react-native"
+import { View, Alert, StyleSheet, TouchableOpacity } from "react-native"
 import { Card, CardContent } from "@/components/ui/card"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-
 import actualizarEstadoPedido from "@/src/pedidos/hooks/actulizarEstadoDePedido"
 import usarUsuarios from "@/src/pedidos/hooks/usuarios"
 import actualizarClientePedido from "@/src/pedidos/hooks/actualizarClienteDelPedido"
@@ -11,6 +10,8 @@ import SelectorCliente from "./seleccionarCliente"
 import InformacionPedido from "./informacionDelPedido"
 import SelectorEstado from "./seleccionarEstado"
 import BotonesAccion from "./botonesAccion"
+import { DetallePedido } from "./detallePedido"
+import { ModalAgregarItem } from "./modalAgregarItem"
 
 type Props = {
   pedidoId: string
@@ -46,6 +47,8 @@ const TarjetaParaEditarPedido = ({
     id: usuario_id,
     nombre: nombre_del_encargado,
   })
+  const [expandido, setExpandido] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
 
   const { actualizarEstado, cargando, error } = actualizarEstadoPedido()
   const { usuarios, cargando: cargandoUsuarios } = usarUsuarios()
@@ -97,35 +100,65 @@ const TarjetaParaEditarPedido = ({
     }
   }
 
+  const manejarItemAgregado = () => {
+    if (onEstadoActualizado) {
+      onEstadoActualizado()
+    }
+  }
+
   return (
     <Card style={styles.tarjeta}>
-      <CardContent style={styles.contenido}>
-        {pedidoEntregado && <BannerPedidoEntregado />}
+      <TouchableOpacity activeOpacity={0.9} onPress={() => setExpandido(!expandido)}>
+        <CardContent style={styles.contenido}>
+          {pedidoEntregado && <BannerPedidoEntregado />}
 
-        <SelectorCliente
-          clienteActual={clienteActual}
-          usuarios={usuarios}
-          cargandoCliente={cargandoCliente}
-          cargandoUsuarios={cargandoUsuarios}
-          pedidoEntregado={pedidoEntregado}
-          contentInsets={contentInsets}
-          onCambiarCliente={manejarCambioCliente}
-        />
-
-        <InformacionPedido fecha_de_emision={fecha_de_emision} precio={precio} />
-
-        <View style={styles.contenedorInferior}>
-          <SelectorEstado
-            estadoActual={estadoActual}
-            cargando={cargando}
+          <SelectorCliente
+            clienteActual={clienteActual}
+            usuarios={usuarios}
+            cargandoCliente={cargandoCliente}
+            cargandoUsuarios={cargandoUsuarios}
             pedidoEntregado={pedidoEntregado}
             contentInsets={contentInsets}
-            onCambiarEstado={manejarCambioEstado}
+            onCambiarCliente={manejarCambioCliente}
           />
 
-          <BotonesAccion pedidoEntregado={pedidoEntregado} />
-        </View>
-      </CardContent>
+          <InformacionPedido fecha_de_emision={fecha_de_emision} precio={precio} />
+
+          <View style={styles.contenedorInferior}>
+            <SelectorEstado
+              estadoActual={estadoActual}
+              cargando={cargando}
+              pedidoEntregado={pedidoEntregado}
+              contentInsets={contentInsets}
+              onCambiarEstado={manejarCambioEstado}
+            />
+
+            <BotonesAccion pedidoEntregado={pedidoEntregado} />
+          </View>
+
+          {expandido && <DetallePedido pedidoId={pedidoId} />}
+        </CardContent>
+      </TouchableOpacity>
+
+      {expandido && (
+        <TouchableOpacity
+          style={styles.botonAgregarItem}
+          onPress={() => setModalVisible(true)}
+          disabled={pedidoEntregado}
+        >
+          <View style={[styles.iconoMas, pedidoEntregado && styles.iconoDeshabilitado]}>
+            <View style={styles.masHorizontal} />
+            <View style={styles.masVertical} />
+          </View>
+        </TouchableOpacity>
+      )}
+
+      <ModalAgregarItem
+        visible={modalVisible}
+        pedidoId={pedidoId}
+        onClose={() => setModalVisible(false)}
+        onItemAgregado={manejarItemAgregado}
+      />
     </Card>
   )
 }
@@ -141,6 +174,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
     padding: 0,
+    marginBottom: 16,
   },
   contenido: {
     padding: 20,
@@ -151,6 +185,45 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 8,
+  },
+  botonAgregarItem: {
+    position: "absolute",
+    bottom: 16,
+    right: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#3b82f6",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  iconoMas: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconoDeshabilitado: {
+    opacity: 0.5,
+  },
+  masHorizontal: {
+    position: "absolute",
+    width: 20,
+    height: 3,
+    backgroundColor: "#ffffff",
+    borderRadius: 2,
+  },
+  masVertical: {
+    position: "absolute",
+    width: 3,
+    height: 20,
+    backgroundColor: "#ffffff",
+    borderRadius: 2,
   },
 })
 
