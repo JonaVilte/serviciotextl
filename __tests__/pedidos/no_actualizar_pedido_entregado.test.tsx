@@ -1,9 +1,9 @@
 import { renderHook, act } from '@testing-library/react-native';
-import actualizarEstadoPedido from '@/src/pedidos/hooks/actulizarEstadoDePedido';
+import usarEstadoDelPedido from '@/src/pedidos/hooks/actulizarEstadoDePedido';
 
-describe('useActualizarEstadoPedido', () => {
-  test('actualiza correctamente el estado del pedido', async () => {
-    const { result } = renderHook(() => actualizarEstadoPedido());
+describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría poder registrar mis pedidos, para poder llevar un control de las ventas.', () => {
+  test('no actualiza el estado del pedido si ya esta entregado', async () => {
+    const { result } = renderHook(() => usarEstadoDelPedido());
     console.log(result);
     await act(async () => {
       const success = await result.current.actualizarEstado(

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { View, Alert, StyleSheet, TouchableOpacity } from "react-native"
 import { Card, CardContent } from "@/components/ui/card"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import actualizarEstadoPedido from "@/src/pedidos/hooks/actulizarEstadoDePedido"
+import usarEstadoDelPedido from "@/src/pedidos/hooks/actulizarEstadoDePedido"
 import usarUsuarios from "@/src/pedidos/hooks/usuarios"
 import actualizarClientePedido from "@/src/pedidos/hooks/actualizarClienteDelPedido"
 import BannerPedidoEntregado from "./bannerPedidoEntregado"
@@ -50,7 +50,7 @@ const TarjetaParaEditarPedido = ({
   const [expandido, setExpandido] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
 
-  const { actualizarEstado, cargando, error } = actualizarEstadoPedido()
+  const { actualizarEstado, cargando, error } = usarEstadoDelPedido()
   const { usuarios, cargando: cargandoUsuarios } = usarUsuarios()
   const { actualizarCliente, cargando: cargandoCliente, error: errorCliente } = actualizarClientePedido()
 

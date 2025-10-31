@@ -11,11 +11,11 @@ interface actualizarEstadoPedidoReturn {
   error: string | null
 }
 
-const actualizarEstadoPedido = (): actualizarEstadoPedidoReturn => {
+const usarEstadoDelPedido = (): actualizarEstadoPedidoReturn => {
   const [cargando, setCargando] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
-  const actualizarEstado = async (pedidoId: string, nuevoEstado: EstadoPedido): Promise<boolean> => {
+  const actualizar = async (pedidoId: string, nuevoEstado: EstadoPedido): Promise<boolean> => {
     setCargando(true)
     setError(null)
 
@@ -64,7 +64,7 @@ const actualizarEstadoPedido = (): actualizarEstadoPedidoReturn => {
     }
   }
 
-  return { actualizarEstado, cargando, error }
+  return { actualizarEstado: actualizar, cargando, error }
 }
 
-export default actualizarEstadoPedido
+export default usarEstadoDelPedido
