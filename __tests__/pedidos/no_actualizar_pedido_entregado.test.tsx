@@ -7,10 +7,10 @@ describe('useActualizarEstadoPedido', () => {
     console.log(result);
     await act(async () => {
       const success = await result.current.actualizarEstado(
-        '2bba368c-69a5-48e9-9d76-050c6d335c91',
-        'en_proceso'
+        '324cfbd6-0aa5-4908-b103-0e0de3dbbaf8',
+        'entregado'
       );
-      expect(success).toBe(true);
+      expect(success).toBe(false);
     });
   });
 });
