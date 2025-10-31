@@ -6,11 +6,22 @@ type Props = {
   precio: number
 }
 
+const formatDate = (date: Date) => {
+    return date.toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
 const InformacionPedido = ({ fecha_de_emision, precio }: Props) => {
   return (
     <View style={styles.contenedor}>
-      <Text style={styles.fecha}>Fecha de Emisión: {fecha_de_emision.toLocaleString()}</Text>
-      <Text style={styles.precio}>Precio del Pedido: {precio.toFixed(2)}$</Text>
+      {/* Aqui esta la fecha de emición y el precio del pedido*/}
+      <Text style={styles.fecha}>{formatDate(fecha_de_emision)}</Text>
+      <Text style={styles.precio}>${precio.toFixed(2)}</Text>
     </View>
   )
 }
@@ -26,7 +37,7 @@ const styles = StyleSheet.create({
     marginTop: -4,
   },
   precio: {
-    fontSize: 32,
+    fontSize: 20,
     color: "#059669",
     fontWeight: "700",
     marginTop: 4,

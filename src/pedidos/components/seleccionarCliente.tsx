@@ -36,7 +36,7 @@ const SelectorCliente = ({
   return (
     <View style={styles.contenedorCliente}>
       <Text style={styles.etiquetaCliente}>
-        Pedido de{" "}
+        Para: {" "}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <TouchableOpacity

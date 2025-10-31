@@ -29,7 +29,6 @@ export default function MostrarPedidos() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Gestión de Pedidos</Text>
-        <Text style={styles.subtitle}>Sistema de control de ventas textil</Text>
       </View>
       <ListaDePedidosAdmin />   
       <AlertaBajoStock />
@@ -51,7 +50,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#e5e7eb",
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#111827",
     marginBottom: 4,
