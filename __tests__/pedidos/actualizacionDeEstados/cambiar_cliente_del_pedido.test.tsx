@@ -5,7 +5,7 @@ describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría 
   beforeAll(() => jest.useFakeTimers())
   afterAll(() => jest.useRealTimers())
 
-  test('no actualiza  el cliente del pedido', async () => {
+  test('actualiza el cliente del pedido', async () => {
     const { result } = renderHook(() => actualizarClientePedido());
     const success = await result.current.actualizarCliente(
       '2bba368c-69a5-48e9-9d76-050c6d335c91',

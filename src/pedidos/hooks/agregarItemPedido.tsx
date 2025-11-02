@@ -22,7 +22,7 @@ export function agregarItemPedido() {
       })
 
       if (insertError) {
-        setError(insertError.message)
+        setError("No se pudo insertar el nuevo pedido")
         return false
       }
 
@@ -33,7 +33,7 @@ export function agregarItemPedido() {
         .eq("pedido_id", pedidoId)
 
       if (detallesError) {
-        setError(detallesError.message)
+        setError("No se pudo actualizar el total del pedido")
         return false
       }
 
