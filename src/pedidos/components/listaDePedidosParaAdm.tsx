@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { Text } from '@/components/ui/text';
 import TarjetaParaVisualizarUnPedido from '@/src/pedidos/components/index';
-import usarPedidos from '@/src/pedidos/hooks/index';
+import usarPedidos from '@/src/pedidos/hooks/usarIndex';
 import TarjetaParaEditarPedido from './tarjetaParaEditarPedido';
 
 const ListaDePedidosAdmin = () => {
@@ -43,7 +43,9 @@ const ListaDePedidosAdmin = () => {
             usuario_id={pedido.usuario_id}
             nombre_del_encargado={pedido.usuario_nombre}
             fecha_de_emision={new Date(pedido.fecha_emision)}
-            estado_del_pedido={pedido.estado as 'completado' | 'en_proceso' | 'cancelado' | 'entregado' | 'pendiente'}
+            estado_del_pedido={
+              pedido.estado as 'completado' | 'en_proceso' | 'cancelado' | 'entregado' | 'pendiente'
+            }
             precio={pedido.total}
             onEstadoActualizado={recargarPedidos}
             onClienteActualizado={recargarPedidos}

@@ -1,28 +1,28 @@
-import { useState } from "react"
-import { View, Alert, StyleSheet, TouchableOpacity } from "react-native"
-import { Card, CardContent } from "@/components/ui/card"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import usarEstadoDelPedido from "@/src/pedidos/hooks/actulizarEstadoDePedido"
-import usarUsuarios from "@/src/pedidos/hooks/usuarios"
-import actualizarClientePedido from "@/src/pedidos/hooks/actualizarClienteDelPedido"
-import BannerPedidoEntregado from "./bannerPedidoEntregado"
-import SelectorCliente from "./seleccionarCliente"
-import InformacionPedido from "./informacionDelPedido"
-import SelectorEstado from "./seleccionarEstado"
-import BotonesAccion from "./botonesAccion"
-import { DetallePedido } from "./detallePedido"
-import { ModalAgregarItem } from "./modalAgregarItem"
+import { useState } from 'react';
+import { View, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { Card, CardContent } from '@/components/ui/card';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import usarEstadoDelPedido from '@/src/pedidos/hooks/usarActulizarEstadoDePedido';
+import usarUsuarios from '@/src/pedidos/hooks/usarUsuarios';
+import actualizarClientePedido from '@/src/pedidos/hooks/usarActualizarClienteDelPedido';
+import BannerPedidoEntregado from './bannerPedidoEntregado';
+import SelectorCliente from './seleccionarCliente';
+import InformacionPedido from './informacionDelPedido';
+import SelectorEstado from './seleccionarEstado';
+import BotonesAccion from './botonesAccion';
+import { DetallePedido } from './detallePedido';
+import { ModalAgregarItem } from './modalAgregarItem';
 
 type Props = {
-  pedidoId: string
-  usuario_id: string
-  nombre_del_encargado: string
-  fecha_de_emision: Date
-  estado_del_pedido: "completado" | "en_proceso" | "pendiente" | "entregado" | "cancelado"
-  precio: number
-  onEstadoActualizado?: () => void
-  onClienteActualizado?: () => void
-}
+  pedidoId: string;
+  usuario_id: string;
+  nombre_del_encargado: string;
+  fecha_de_emision: Date;
+  estado_del_pedido: 'completado' | 'en_proceso' | 'pendiente' | 'entregado' | 'cancelado';
+  precio: number;
+  onEstadoActualizado?: () => void;
+  onClienteActualizado?: () => void;
+};
 
 const TarjetaParaEditarPedido = ({
   pedidoId,
@@ -34,77 +34,91 @@ const TarjetaParaEditarPedido = ({
   onEstadoActualizado,
   onClienteActualizado,
 }: Props) => {
-  const insets = useSafeAreaInsets()
+  const insets = useSafeAreaInsets();
   const contentInsets = {
     top: insets.top,
     bottom: insets.bottom,
     left: 4,
     right: 4,
-  }
+  };
 
-  const [estadoActual, setEstadoActual] = useState(estado_del_pedido)
+  const [estadoActual, setEstadoActual] = useState(estado_del_pedido);
   const [clienteActual, setClienteActual] = useState({
     id: usuario_id,
     nombre: nombre_del_encargado,
-  })
-  const [expandido, setExpandido] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
+  });
+  const [expandido, setExpandido] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const { actualizarEstado, cargando, error } = usarEstadoDelPedido()
-  const { usuarios, cargando: cargandoUsuarios } = usarUsuarios()
-  const { actualizarCliente, cargando: cargandoCliente, error: errorCliente } = actualizarClientePedido()
+  const { actualizarEstado, cargando, error } = usarEstadoDelPedido();
+  const { usuarios, cargando: cargandoUsuarios } = usarUsuarios();
+  const {
+    actualizarCliente,
+    cargando: cargandoCliente,
+    error: errorCliente,
+  } = actualizarClientePedido();
 
-  const pedidoEntregado = estadoActual === "entregado"
+  const pedidoEntregado = estadoActual === 'entregado';
 
   const manejarCambioEstado = async (
-    nuevoEstado: "completado" | "en_proceso" | "pendiente" | "entregado" | "cancelado",
+    nuevoEstado: 'completado' | 'en_proceso' | 'pendiente' | 'entregado' | 'cancelado'
   ) => {
     if (pedidoEntregado) {
-      Alert.alert("Pedido Entregado", "No se puede modificar el estado de un pedido que ya fue entregado.", [
-        { text: "Entendido" },
-      ])
-      return
+      Alert.alert(
+        'Pedido Entregado',
+        'No se puede modificar el estado de un pedido que ya fue entregado.',
+        [{ text: 'Entendido' }]
+      );
+      return;
     }
 
-    const exito = await actualizarEstado(pedidoId, nuevoEstado)
+    const exito = await actualizarEstado(pedidoId, nuevoEstado);
 
     if (exito) {
-      setEstadoActual(nuevoEstado)
-      Alert.alert("¡Éxito!", `El estado del pedido se actualizó a "${nuevoEstado}"`, [{ text: "OK" }])
+      setEstadoActual(nuevoEstado);
+      Alert.alert('¡Éxito!', `El estado del pedido se actualizó a "${nuevoEstado}"`, [
+        { text: 'OK' },
+      ]);
       if (onEstadoActualizado) {
-        onEstadoActualizado()
+        onEstadoActualizado();
       }
     } else {
-      Alert.alert("Error", error || "No se pudo actualizar el estado del pedido", [{ text: "OK" }])
+      Alert.alert('Error', error || 'No se pudo actualizar el estado del pedido', [{ text: 'OK' }]);
     }
-  }
+  };
 
   const manejarCambioCliente = async (nuevoUsuarioId: string, nuevoNombre: string) => {
     if (pedidoEntregado) {
-      Alert.alert("Pedido Entregado", "No se puede modificar el cliente de un pedido que ya fue entregado.", [
-        { text: "Entendido" },
-      ])
-      return
+      Alert.alert(
+        'Pedido Entregado',
+        'No se puede modificar el cliente de un pedido que ya fue entregado.',
+        [{ text: 'Entendido' }]
+      );
+      return;
     }
 
-    const exito = await actualizarCliente(pedidoId, nuevoUsuarioId)
+    const exito = await actualizarCliente(pedidoId, nuevoUsuarioId);
 
     if (exito) {
-      setClienteActual({ id: nuevoUsuarioId, nombre: nuevoNombre })
-      Alert.alert("¡Éxito!", `El cliente del pedido se actualizó a "${nuevoNombre}"`, [{ text: "OK" }])
+      setClienteActual({ id: nuevoUsuarioId, nombre: nuevoNombre });
+      Alert.alert('¡Éxito!', `El cliente del pedido se actualizó a "${nuevoNombre}"`, [
+        { text: 'OK' },
+      ]);
       if (onClienteActualizado) {
-        onClienteActualizado()
+        onClienteActualizado();
       }
     } else {
-      Alert.alert("Error", errorCliente || "No se pudo actualizar el cliente del pedido", [{ text: "OK" }])
+      Alert.alert('Error', errorCliente || 'No se pudo actualizar el cliente del pedido', [
+        { text: 'OK' },
+      ]);
     }
-  }
+  };
 
   const manejarItemAgregado = () => {
     if (onEstadoActualizado) {
-      onEstadoActualizado()
+      onEstadoActualizado();
     }
-  }
+  };
 
   return (
     <Card style={styles.tarjeta}>
@@ -144,8 +158,7 @@ const TarjetaParaEditarPedido = ({
         <TouchableOpacity
           style={styles.botonAgregarItem}
           onPress={() => setModalVisible(true)}
-          disabled={pedidoEntregado}
-        >
+          disabled={pedidoEntregado}>
           <View style={[styles.iconoMas, pedidoEntregado && styles.iconoDeshabilitado]}>
             <View style={styles.masHorizontal} />
             <View style={styles.masVertical} />
@@ -160,15 +173,15 @@ const TarjetaParaEditarPedido = ({
         onItemAgregado={manejarItemAgregado}
       />
     </Card>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   tarjeta: {
-    width: "100%",
-    backgroundColor: "#ffffff",
+    width: '100%',
+    backgroundColor: '#ffffff',
     borderRadius: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -181,22 +194,22 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   contenedorInferior: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 8,
   },
   botonAgregarItem: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 16,
     right: 16,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#3b82f6",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
+    backgroundColor: '#3b82f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -205,26 +218,26 @@ const styles = StyleSheet.create({
   iconoMas: {
     width: 24,
     height: 24,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconoDeshabilitado: {
     opacity: 0.5,
   },
   masHorizontal: {
-    position: "absolute",
+    position: 'absolute',
     width: 20,
     height: 3,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderRadius: 2,
   },
   masVertical: {
-    position: "absolute",
+    position: 'absolute',
     width: 3,
     height: 20,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderRadius: 2,
   },
-})
+});
 
-export default TarjetaParaEditarPedido
+export default TarjetaParaEditarPedido;

@@ -1,20 +1,20 @@
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native"
-import { usarDetallesPedido } from "../hooks/detallesPedido"
-import { ItemPedido } from "./itemPedido"
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { usarDetallesPedido } from '../hooks/usarDetallesPedido';
+import { ItemPedido } from './itemPedido';
 
 type Props = {
-  pedidoId: string
-}
+  pedidoId: string;
+};
 
 export function DetallePedido({ pedidoId }: Props) {
-  const { detalles, loading, error } = usarDetallesPedido(pedidoId)
+  const { detalles, loading, error } = usarDetallesPedido(pedidoId);
 
   if (loading) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#3b82f6" />
       </View>
-    )
+    );
   }
 
   if (error) {
@@ -22,7 +22,7 @@ export function DetallePedido({ pedidoId }: Props) {
       <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Error: {error}</Text>
       </View>
-    )
+    );
   }
 
   if (detalles.length === 0) {
@@ -30,7 +30,7 @@ export function DetallePedido({ pedidoId }: Props) {
       <View style={styles.centerContainer}>
         <Text style={styles.emptyText}>No hay items en este pedido</Text>
       </View>
-    )
+    );
   }
 
   return (
@@ -51,7 +51,7 @@ export function DetallePedido({ pedidoId }: Props) {
         ))}
       </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -59,12 +59,12 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
+    borderTopColor: '#e5e7eb',
   },
   titulo: {
     fontSize: 16,
-    fontWeight: "700",
-    color: "#111827",
+    fontWeight: '700',
+    color: '#111827',
     marginBottom: 12,
   },
   listaContainer: {
@@ -72,15 +72,15 @@ const styles = StyleSheet.create({
   },
   centerContainer: {
     padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   errorText: {
-    color: "#ef4444",
+    color: '#ef4444',
     fontSize: 14,
   },
   emptyText: {
-    color: "#9ca3af",
+    color: '#9ca3af',
     fontSize: 14,
   },
-})
+});

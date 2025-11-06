@@ -1,44 +1,53 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from "react-native"
-import { usarProductos } from "../hooks/productos"
-import { agregarItemPedido } from "../hooks/agregarItemPedido"
+import { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import { usarProductos } from '../hooks/usarProductos';
+import { agregarItemPedido } from '../hooks/usarAgregarItemPedido';
 
 type Props = {
-  visible: boolean
-  pedidoId: string
-  onClose: () => void
-  onItemAgregado: () => void
-}
+  visible: boolean;
+  pedidoId: string;
+  onClose: () => void;
+  onItemAgregado: () => void;
+};
 
 export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }: Props) {
-  const { productos, loading: loadingProductos } = usarProductos()
-  const { agregar, loading: agregando } = agregarItemPedido()
-  const [productoSeleccionado, setProductoSeleccionado] = useState<string | null>(null)
-  const [cantidad, setCantidad] = useState("1")
-  const [mostrarProductos, setMostrarProductos] = useState(false)
+  const { productos, loading: loadingProductos } = usarProductos();
+  const { agregar, loading: agregando } = agregarItemPedido();
+  const [productoSeleccionado, setProductoSeleccionado] = useState<string | null>(null);
+  const [cantidad, setCantidad] = useState('1');
+  const [mostrarProductos, setMostrarProductos] = useState(false);
 
-  const productoActual = productos.find((p) => p.id === productoSeleccionado)
+  const productoActual = productos.find((p) => p.id === productoSeleccionado);
 
   const handleAgregar = async () => {
-    if (!productoSeleccionado || !cantidad) return
+    if (!productoSeleccionado || !cantidad) return;
 
-    const cantidadNum = Number.parseInt(cantidad)
-    if (isNaN(cantidadNum) || cantidadNum <= 0) return
+    const cantidadNum = Number.parseInt(cantidad);
+    if (isNaN(cantidadNum) || cantidadNum <= 0) return;
 
-    const producto = productos.find((p) => p.id === productoSeleccionado)
-    if (!producto) return
+    const producto = productos.find((p) => p.id === productoSeleccionado);
+    if (!producto) return;
 
-    const exito = await agregar(pedidoId, productoSeleccionado, cantidadNum, producto.precio)
+    const exito = await agregar(pedidoId, productoSeleccionado, cantidadNum, producto.precio);
 
     if (exito) {
-      setProductoSeleccionado(null)
-      setCantidad("1")
-      onItemAgregado()
-      onClose()
+      setProductoSeleccionado(null);
+      setCantidad('1');
+      onItemAgregado();
+      onClose();
     }
-  }
+  };
 
   return (
     <Modal visible={visible} transparent animationType="fade">
@@ -50,11 +59,13 @@ export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }:
             <ActivityIndicator size="large" color="#3b82f6" />
           ) : (
             <>
-              <TouchableOpacity style={styles.selector} onPress={() => setMostrarProductos(!mostrarProductos)}>
+              <TouchableOpacity
+                style={styles.selector}
+                onPress={() => setMostrarProductos(!mostrarProductos)}>
                 <Text style={styles.selectorText}>
-                  {productoActual ? productoActual.nombre : "Seleccionar producto"}
+                  {productoActual ? productoActual.nombre : 'Seleccionar producto'}
                 </Text>
-                <Text style={styles.chevron}>{mostrarProductos ? "▲" : "▼"}</Text>
+                <Text style={styles.chevron}>{mostrarProductos ? '▲' : '▼'}</Text>
               </TouchableOpacity>
 
               {mostrarProductos && (
@@ -64,10 +75,9 @@ export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }:
                       key={producto.id}
                       style={styles.productoItem}
                       onPress={() => {
-                        setProductoSeleccionado(producto.id)
-                        setMostrarProductos(false)
-                      }}
-                    >
+                        setProductoSeleccionado(producto.id);
+                        setMostrarProductos(false);
+                      }}>
                       <View>
                         <Text style={styles.productoNombre}>{producto.nombre}</Text>
                         <Text style={styles.productoDetalle}>
@@ -100,7 +110,10 @@ export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }:
               </View>
 
               <View style={styles.botonesContainer}>
-                <TouchableOpacity style={[styles.boton, styles.botonCancelar]} onPress={onClose} disabled={agregando}>
+                <TouchableOpacity
+                  style={[styles.boton, styles.botonCancelar]}
+                  onPress={onClose}
+                  disabled={agregando}>
                   <Text style={styles.botonCancelarText}>Cancelar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -110,8 +123,7 @@ export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }:
                     (!productoSeleccionado || agregando) && styles.botonDeshabilitado,
                   ]}
                   onPress={handleAgregar}
-                  disabled={!productoSeleccionado || agregando}
-                >
+                  disabled={!productoSeleccionado || agregando}>
                   {agregando ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
@@ -124,138 +136,138 @@ export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }:
         </View>
       </View>
     </Modal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modal: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
-    width: "90%",
-    maxHeight: "80%",
+    width: '90%',
+    maxHeight: '80%',
   },
   titulo: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
+    fontWeight: '700',
+    color: '#111827',
     marginBottom: 16,
   },
   selector: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 12,
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: '#d1d5db',
     borderRadius: 8,
     marginBottom: 12,
   },
   selectorText: {
     fontSize: 14,
-    color: "#111827",
+    color: '#111827',
   },
   chevron: {
     fontSize: 12,
-    color: "#6b7280",
+    color: '#6b7280',
   },
   listaProductos: {
     maxHeight: 200,
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: '#d1d5db',
     borderRadius: 8,
     marginBottom: 12,
   },
   productoItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: '#e5e7eb',
   },
   productoNombre: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
+    fontWeight: '600',
+    color: '#111827',
   },
   productoDetalle: {
     fontSize: 12,
-    color: "#6b7280",
+    color: '#6b7280',
     marginTop: 2,
   },
   productoPrecio: {
     fontSize: 14,
-    fontWeight: "700",
-    color: "#3b82f6",
+    fontWeight: '700',
+    color: '#3b82f6',
   },
   infoProducto: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: '#f3f4f6',
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
   },
   infoLabel: {
     fontSize: 12,
-    color: "#6b7280",
+    color: '#6b7280',
   },
   infoPrecio: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
+    fontWeight: '700',
+    color: '#111827',
     marginVertical: 4,
   },
   infoStock: {
     fontSize: 12,
-    color: "#6b7280",
+    color: '#6b7280',
   },
   cantidadContainer: {
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
+    fontWeight: '600',
+    color: '#111827',
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: '#d1d5db',
     borderRadius: 8,
     padding: 12,
     fontSize: 14,
   },
   botonesContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
   },
   boton: {
     flex: 1,
     padding: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   botonCancelar: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: '#f3f4f6',
   },
   botonCancelarText: {
-    color: "#374151",
-    fontWeight: "600",
+    color: '#374151',
+    fontWeight: '600',
   },
   botonAgregar: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: '#3b82f6',
   },
   botonAgregarText: {
-    color: "#fff",
-    fontWeight: "600",
+    color: '#fff',
+    fontWeight: '600',
   },
   botonDeshabilitado: {
-    backgroundColor: "#9ca3af",
+    backgroundColor: '#9ca3af',
   },
-})
+});
