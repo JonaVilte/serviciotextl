@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import {
   View,
@@ -39,7 +37,12 @@ export function ModalAgregarItem({ visible, pedidoId, onClose, onItemAgregado }:
     const producto = productos.find((p) => p.id === productoSeleccionado);
     if (!producto) return;
 
-    const exito = await agregar(pedidoId, productoSeleccionado, cantidadNum, producto.precio);
+    const exito = await agregar({
+      pedidoId: pedidoId,
+      productoId: productoSeleccionado,
+      cantidad: cantidadNum,
+      precioUnitario: producto.precio,
+    });
 
     if (exito) {
       setProductoSeleccionado(null);
