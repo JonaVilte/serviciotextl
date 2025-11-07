@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Platform, TouchableOpacity } from 'react-native';
 import { supabase } from '@/lib/supabaseClient';
 import { Text } from '@/components/ui/text';
-import AlertaBajoStock from '@/src/alertaDeStock';
-import ListaDePedidos from '@/src/pedidos/components/listaDePedidos';
+import { ArrowLeft } from 'lucide-react-native'; // ✅ Flecha real
 import ListaDePedidosAdmin from '@/src/pedidos/components/listaDePedidosParaAdm';
+
+const ShinySundayFont = Platform.select({ ios: 'System', android: 'sans-serif' });
 
 export default function MostrarPedidos() {
   const [pedidos, setPedidos] = useState<{ id: string | number }[]>([]);
@@ -28,8 +28,16 @@ export default function MostrarPedidos() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => console.log('Navegar hacia atrás')}
+        >
+          <ArrowLeft color="#FFFDF6" size={28} strokeWidth={2.5} />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Gestión de Pedidos</Text>
       </View>
+
       <ListaDePedidosAdmin />
     </View>
   );
@@ -38,24 +46,28 @@ export default function MostrarPedidos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#FFFDF6',
   },
   header: {
-    paddingTop: 60,
+    paddingTop: 55,
     paddingHorizontal: 20,
-    paddingBottom: 20,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    paddingBottom: 16,
+    backgroundColor: '#059669',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 0, // ✅ sin borde
+    elevation: 0, // ✅ sin sombra en Android
+    shadowColor: 'transparent', // ✅ sin sombra en iOS
+  },
+  backButton: {
+    paddingRight: 10,
+    paddingVertical: 4,
   },
   title: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#6b7280',
+    color: '#FFFDF6',
+    fontFamily: ShinySundayFont,
+    flex: 1,
   },
 });
