@@ -40,7 +40,7 @@ const FormularioProducto = () => {
     const exito = await agregarProducto({
       nombre: nombre.trim(),
       descripcion: descripcion.trim(),
-      precio: Number(precio),
+      precioUnitario: Number(precio),
       stock: Number(stock),
       categoria: categoria.trim(),
       talla: talla.trim(),

@@ -10,7 +10,7 @@ describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría 
         descripcion: 'el mas veloz',
         precioUnitario: 35000,
         stock: 78,
-        categoria: 'objeto',
+        categoria: 'Pantalon',
         talla: 'XL',
         color: 'Rojo',
     });
