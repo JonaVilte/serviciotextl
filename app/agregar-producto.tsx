@@ -11,7 +11,6 @@ export default function AgregarProductoScreen() {
 
   return (
     <View style={styles.contenedor}>
-      {/* Header verde */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.botonFlecha} onPress={() => router.push("/(tabs)")}>
           <ArrowLeft size={28} color="#ffffff" />
@@ -19,7 +18,6 @@ export default function AgregarProductoScreen() {
         <Text style={styles.tituloHeader}>Agregar Producto</Text>
       </View>
 
-      {/* Formulario */}
       <FormularioProducto />
     </View>
   )
