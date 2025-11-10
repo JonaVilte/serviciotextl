@@ -1,13 +1,17 @@
+"use client"
+
 import { View, StyleSheet, Platform, ActivityIndicator, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
 import EncabezadoUsuario from "@/src/pedidos/components/encabezadoUsuario"
 import ListaDeProductos from "@/src/pedidos/components/listaDeProductos"
 import { usarSesion } from "@/src/pedidos/hooks/usarSesion"
+import { useRouter } from "expo-router"
 
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 const ACCENT_COLOR = "#059669"
 
 export default function HomeScreen() {
+  const router = useRouter()
   const { usuario, cargando, cerrarSesion } = usarSesion()
 
   if (cargando) {
@@ -26,7 +30,7 @@ export default function HomeScreen() {
       <View style={styles.contenido}>
         <View style={styles.seccionTitulo}>
           <Text style={styles.titulo}>Productos</Text>
-          <TouchableOpacity style={styles.botonAgregar}>
+          <TouchableOpacity style={styles.botonAgregar} onPress={() => router.push("/agregar-producto")}>
             <Text style={styles.textoBotonAgregar}>+ Agregar</Text>
           </TouchableOpacity>
         </View>
@@ -74,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: ACCENT_COLOR,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 20,
   },
   textoBotonAgregar: {
     color: "#FFFFFF",

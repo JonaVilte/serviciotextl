@@ -61,6 +61,7 @@ const TarjetaParaEditarPedido = ({
   const [expandido, setExpandido] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [dropdownAbierto, setDropdownAbierto] = useState(false)
+  const [dropdownClienteAbierto, setDropdownClienteAbierto] = useState(false)
 
   const { actualizarEstado, cargando, error } = usarEstadoDelPedido()
   const { usuarios, cargando: cargandoUsuarios } = usarUsuarios()
@@ -117,7 +118,7 @@ const TarjetaParaEditarPedido = ({
   }
 
   return (
-    <Card style={[styles.tarjeta, dropdownAbierto && { zIndex: 9999 }]}>
+    <Card style={[styles.tarjeta, (dropdownAbierto || dropdownClienteAbierto) && { zIndex: 9999 }]}>
       <TouchableOpacity activeOpacity={0.8} onPress={manejarToggleExpandido}>
         <CardContent style={styles.contenido}>
           {pedidoEntregado && <BannerPedidoEntregado />}
@@ -130,6 +131,7 @@ const TarjetaParaEditarPedido = ({
             pedidoEntregado={pedidoEntregado}
             contentInsets={contentInsets}
             onCambiarCliente={manejarCambioCliente}
+            onDropdownChange={setDropdownClienteAbierto}
           />
 
           <InformacionPedido fecha_de_emision={fecha_de_emision} precio={precio} />

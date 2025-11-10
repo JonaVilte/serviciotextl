@@ -1,12 +1,8 @@
-import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native"
+"use client"
+
+import { useState } from "react"
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from "react-native"
 import { Text } from "@/components/ui/text"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 type Usuario = {
   id: string
@@ -15,13 +11,21 @@ type Usuario = {
 }
 
 type Props = {
-  clienteActual: { id: string; nombre: string }
+  // Props para editar pedido existente
+  clienteActual?: { id: string; nombre: string }
+  pedidoEntregado?: boolean
+  contentInsets?: { top: number; bottom: number; left: number; right: number }
+  onCambiarCliente?: (usuarioId: string, nombre: string) => void
+
+  // Props para crear pedido nuevo
+  usuarioSeleccionado?: string | null
+  onSeleccionar?: (usuarioId: string | null) => void
+
+  // Props comunes
   usuarios: Usuario[]
-  cargandoCliente: boolean
-  cargandoUsuarios: boolean
-  pedidoEntregado: boolean
-  contentInsets: { top: number; bottom: number; left: number; right: number }
-  onCambiarCliente: (usuarioId: string, nombre: string) => void
+  cargandoCliente?: boolean
+  cargandoUsuarios?: boolean
+  onDropdownChange?: (abierto: boolean) => void
 }
 
 const SelectorCliente = ({
@@ -32,48 +36,74 @@ const SelectorCliente = ({
   pedidoEntregado,
   contentInsets,
   onCambiarCliente,
+  usuarioSeleccionado,
+  onSeleccionar,
+  onDropdownChange,
 }: Props) => {
-  return (
-    <View style={styles.contenedorCliente}>
-      <Text style={styles.etiquetaCliente}>
-        Para: {" "}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <TouchableOpacity
-              testID="boton-cambiar-cliente"
-              style={styles.botonCliente}
-              disabled={cargandoCliente || cargandoUsuarios || pedidoEntregado}
-            >
-              {cargandoCliente ? (
-                <ActivityIndicator size="small" color="#059669" />
-              ) : (
-                <View style={styles.filaCliente}>
-                  <Text style={styles.textoCliente}>{clienteActual.nombre}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          </DropdownMenuTrigger>
+  const [abierto, setAbierto] = useState(false)
 
-          {!pedidoEntregado && (
-            <DropdownMenuContent insets={contentInsets} sideOffset={2} className="w-64" align="start">
-              <DropdownMenuGroup>
-                {usuarios.map((usuario) => (
-                  <DropdownMenuItem
-                    key={usuario.id}
-                    onPress={() => onCambiarCliente(usuario.id, usuario.nombre)}
-                    testID={`opcion-cliente-${usuario.id}`}
-                  >
-                    <View style={styles.itemMenuCliente}>
-                      <Text style={styles.textoMenuCliente}>{usuario.nombre}</Text>
-                      <Text style={styles.emailCliente}>{usuario.email}</Text>
-                    </View>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
+  const modoCrear = usuarioSeleccionado !== undefined && onSeleccionar !== undefined
+  const usuarioMostrado = modoCrear
+    ? usuarioSeleccionado && usuarios.length > 0
+      ? usuarios.find((u) => u.id === usuarioSeleccionado)?.nombre || "Seleccionar usuario"
+      : "Seleccionar usuario"
+    : clienteActual?.nombre || ""
+
+  const toggleDropdown = () => {
+    if (!pedidoEntregado && !cargandoCliente && !cargandoUsuarios) {
+      const nuevoEstado = !abierto
+      setAbierto(nuevoEstado)
+      onDropdownChange?.(nuevoEstado)
+    }
+  }
+
+  const seleccionarUsuario = (usuario: Usuario) => {
+    if (modoCrear && onSeleccionar) {
+      onSeleccionar(usuario.id)
+    } else if (onCambiarCliente) {
+      onCambiarCliente(usuario.id, usuario.nombre)
+    }
+    setAbierto(false)
+    onDropdownChange?.(false)
+  }
+
+  return (
+    <View style={[styles.contenedorCliente, abierto && { zIndex: 9999 }]}>
+      <View style={styles.filaEtiqueta}>
+        <Text style={styles.etiquetaCliente}>Para: </Text>
+        <TouchableOpacity
+          testID="boton-cambiar-cliente"
+          style={styles.botonCliente}
+          disabled={cargandoCliente || cargandoUsuarios || pedidoEntregado}
+          onPress={toggleDropdown}
+        >
+          {cargandoCliente || cargandoUsuarios ? (
+            <ActivityIndicator size="small" color="#059669" />
+          ) : (
+            <Text style={styles.textoCliente}>{usuarioMostrado}</Text>
           )}
-        </DropdownMenu>
-      </Text>
+        </TouchableOpacity>
+      </View>
+
+      {abierto && !pedidoEntregado && usuarios.length > 0 && (
+        <View style={styles.dropdownContainer}>
+          <ScrollView style={styles.dropdownScroll} nestedScrollEnabled>
+            {usuarios.map((usuario) => (
+              <TouchableOpacity
+                key={usuario.id}
+                style={styles.dropdownItem}
+                onPress={() => seleccionarUsuario(usuario)}
+                testID={`opcion-cliente-${usuario.id}`}
+              >
+                <View style={styles.itemMenuCliente}>
+                  <Text style={styles.textoMenuCliente}>{usuario.nombre}</Text>
+                  <Text style={styles.emailCliente}>{usuario.email}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
     </View>
   )
 }
@@ -81,6 +111,11 @@ const SelectorCliente = ({
 const styles = StyleSheet.create({
   contenedorCliente: {
     gap: 6,
+    position: "relative",
+  },
+  filaEtiqueta: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   etiquetaCliente: {
     fontSize: 14,
@@ -89,21 +124,42 @@ const styles = StyleSheet.create({
   },
   botonCliente: {
     backgroundColor: "#f3f4f6",
-    paddingVertical: 5,
-    paddingHorizontal: 13,
-    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: "#e5e7eb",
   },
-  filaCliente: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
   textoCliente: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#1f2937",
-    fontWeight: "600",
+    fontWeight: "500",
+  },
+  dropdownContainer: {
+    position: "absolute",
+    top: 35,
+    left: 0,
+    right: 0,
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    maxHeight: 200,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 999,
+    zIndex: 9999,
+  },
+  dropdownScroll: {
+    maxHeight: 200,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
   },
   itemMenuCliente: {
     paddingVertical: 4,

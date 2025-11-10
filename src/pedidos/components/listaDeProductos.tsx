@@ -22,7 +22,7 @@ const ListaDeProductos = () => {
   if (error) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.textoError}>Hubo un problema al cargar los productos. 😥</Text>
+        <Text style={styles.textoError}>Hubo un problema al cargar los productos.</Text>
       </View>
     )
   }
@@ -30,7 +30,7 @@ const ListaDeProductos = () => {
   if (productos.length === 0) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.textoVacio}>🎉 No hay productos disponibles.</Text>
+        <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
       </View>
     )
   }

@@ -1,13 +1,18 @@
-import { View, StyleSheet, ActivityIndicator, ScrollView, Platform } from "react-native"
+"use client"
+
+import { View, StyleSheet, ActivityIndicator, ScrollView, Platform, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
 import usarPedidos from "@/src/pedidos/hooks/usarIndex"
 import TarjetaParaEditarPedido from "./tarjetaParaEditarPedido"
+import { useRouter } from "expo-router"
+import { Plus } from "lucide-react-native"
 
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 const ACCENT_COLOR = "#059669"
 
 const ListaDePedidosAdmin = () => {
   const { pedidos, error, loading, recargarPedidos } = usarPedidos()
+  const router = useRouter()
 
   if (loading) {
     return (
@@ -36,25 +41,35 @@ const ListaDePedidosAdmin = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.lista}>
-      {listaPedidos.map((pedido) => (
-        <TarjetaParaEditarPedido
-          key={pedido.id}
-          pedidoId={pedido.id}
-          usuario_id={pedido.usuario_id}
-          nombre_del_encargado={pedido.usuario_nombre}
-          fecha_de_emision={new Date(pedido.fecha_emision)}
-          estado_del_pedido={pedido.estado as "completado" | "en_proceso" | "cancelado" | "entregado" | "pendiente"}
-          precio={pedido.total}
-          onEstadoActualizado={recargarPedidos}
-          onClienteActualizado={recargarPedidos}
-        />
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.lista}>
+        {listaPedidos.map((pedido) => (
+          <TarjetaParaEditarPedido
+            key={pedido.id}
+            pedidoId={pedido.id}
+            usuario_id={pedido.usuario_id}
+            nombre_del_encargado={pedido.usuario_nombre}
+            fecha_de_emision={new Date(pedido.fecha_emision)}
+            estado_del_pedido={pedido.estado as "completado" | "en_proceso" | "cancelado" | "entregado" | "pendiente"}
+            precio={pedido.total}
+            onEstadoActualizado={recargarPedidos}
+            onClienteActualizado={recargarPedidos}
+          />
+        ))}
+      </ScrollView>
+
+      <TouchableOpacity style={styles.botonFlotante} onPress={() => router.push("/crear-pedido")} activeOpacity={0.8}>
+        <Plus color="#FFFDF6" size={32} strokeWidth={2.5} />
+      </TouchableOpacity>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFDF6",
+  },
   lista: {
     padding: 16,
     gap: 12,
@@ -85,6 +100,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     fontFamily: ShinySundayFont,
+  },
+  botonFlotante: {
+    position: "absolute",
+    bottom: 24,
+    right: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#059669",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
 })
 
