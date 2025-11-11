@@ -1,5 +1,6 @@
 import { View, StyleSheet, Platform } from "react-native"
 import { Text } from "@/components/ui/text"
+import { Colors } from "@/constants/colors"
 
 // Marcador de posición para la fuente
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
@@ -68,7 +69,7 @@ const TarjetaProducto = ({ producto }: Props) => {
 
 const styles = StyleSheet.create({
   tarjeta: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#f9fafb",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -77,8 +78,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 3,
-    borderLeftWidth: 4,
-    borderLeftColor: ACCENT_COLOR,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+
   },
   encabezado: {
     flexDirection: "row",
