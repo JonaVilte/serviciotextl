@@ -1,72 +1,73 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Usuario = {
-  id: string
-  nombre: string
-  email: string
-}
+  id: string;
+  nombre: string;
+  email: string;
+};
+
+const CLAVE_USUARIO = '@usuario_sesion';
 
 export function usarSesion() {
-  const [usuario, setUsuario] = useState<Usuario | null>(null)
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [cargando, setCargando] = useState(true);
 
-  const cargarUsuario = async () => {
+  // Guardar usuario en AsyncStorage
+  const guardarUsuario = async (usuarioData: Usuario | null) => {
     try {
-      setCargando(true)
-      setError(null)
-
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession()
-
-      if (sessionError) {
-        throw sessionError
+      if (usuarioData) {
+        await AsyncStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuarioData));
+      } else {
+        await AsyncStorage.removeItem(CLAVE_USUARIO);
       }
-
-      if (!session?.user) {
-        setUsuario(null)
-        return
-      }
-
-      // Obtener datos del usuario desde la tabla usuarios
-      const { data, error: userError } = await supabase
-        .from("usuarios")
-        .select("id, nombre, email")
-        .eq("id", session.user.id)
-        .single()
-
-      if (userError) {
-        throw userError
-      }
-
-      setUsuario(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al cargar sesión")
-      console.error("Error al cargar sesión:", err)
-    } finally {
-      setCargando(false)
+    } catch (error) {
+      console.error('Error guardando sesión:', error);
     }
-  }
+  };
+
+  // Cargar usuario desde AsyncStorage
+  const cargarSesion = async () => {
+    try {
+      setCargando(true);
+
+      const usuarioGuardado = await AsyncStorage.getItem(CLAVE_USUARIO);
+
+      if (usuarioGuardado) {
+        const usuarioData = JSON.parse(usuarioGuardado);
+        setUsuario(usuarioData);
+      } else {
+        setUsuario(null);
+      }
+    } catch (err) {
+      console.error('Error al cargar sesión:', err);
+      setUsuario(null);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const iniciarSesion = async (usuarioData: Usuario) => {
+    setUsuario(usuarioData);
+    await guardarUsuario(usuarioData);
+  };
 
   const cerrarSesion = async () => {
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      setUsuario(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al cerrar sesión")
-      console.error("Error al cerrar sesión:", err)
-    }
-  }
+    setUsuario(null);
+    await guardarUsuario(null);
+  };
 
   useEffect(() => {
-    cargarUsuario()
-  }, [])
+    cargarSesion();
+  }, []);
 
-  return { usuario, cargando, error, cerrarSesion, recargarUsuario: cargarUsuario }
+  return {
+    usuario,
+    cargando,
+    cerrarSesion,
+    iniciarSesion,
+    recargarUsuario: cargarSesion,
+  };
 }

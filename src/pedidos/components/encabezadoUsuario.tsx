@@ -1,89 +1,73 @@
-import type React from "react"
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
-import { LogOut } from "lucide-react-native"
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Text } from '@/components/ui/text';
+import { LogOut } from 'lucide-react-native';
 
 type Usuario = {
-  id: string
-  nombre: string
-  email: string
-}
+  id: string;
+  nonline: string; // nombre
+  email: string;
+  created_at: string;
+};
 
-interface EncabezadoUsuarioProps {
-  usuario: Usuario | null
-  onCerrarSesion: () => void
-}
+type Props = {
+  usuario: Usuario | null;
+  onCerrarSesion: () => void;
+};
 
-const EncabezadoUsuario: React.FC<EncabezadoUsuarioProps> = ({ usuario, onCerrarSesion }) => {
+const EncabezadoUsuario = ({ usuario, onCerrarSesion }: Props) => {
+  const manejarCerrarSesion = () => {
+    Alert.alert('Cerrar Sesión', '¿Estás seguro de que quieres cerrar sesión?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Cerrar Sesión',
+        style: 'destructive',
+        onPress: onCerrarSesion,
+      },
+    ]);
+  };
+
   return (
-    <View style={styles.header}>
-      <View style={styles.userSection}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{usuario?.nombre?.charAt(0).toUpperCase() || "U"}</Text>
-        </View>
-        <View style={styles.userInfo}>
-          <Text style={styles.welcomeText}>Bienvenido,</Text>
-          <Text style={styles.userName}>{usuario?.nombre || "Usuario"}</Text>
-          <Text style={styles.userRole}>Empleado</Text>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.infoUsuario}>
+        <Text style={styles.nombre}>Hola, {usuario?.nonline || 'Usuario'}</Text>
+        <Text style={styles.email}>{usuario?.email}</Text>
       </View>
-      <TouchableOpacity style={styles.logoutButton} onPress={onCerrarSesion}>
-        <LogOut color="#EF4444" size={24} />
+
+      <TouchableOpacity style={styles.botonCerrarSesion} onPress={manejarCerrarSesion}>
+        <LogOut size={20} color="#ef4444" />
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: "#FFFFFF",
-    paddingTop: 50,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: '#f3f4f6',
   },
-  userSection: {
-    flexDirection: "row",
-    alignItems: "center",
+  infoUsuario: {
     flex: 1,
   },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#059669",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
+  nombre: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 2,
   },
-  avatarText: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  userInfo: {
-    flex: 1,
-  },
-  welcomeText: {
+  email: {
     fontSize: 14,
-    color: "#6B7280",
+    color: '#6b7280',
   },
-  userName: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#111827",
-  },
-  userRole: {
-    fontSize: 14,
-    color: "#059669",
-    fontWeight: "600",
-  },
-  logoutButton: {
+  botonCerrarSesion: {
     padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#fef2f2',
   },
-})
+});
 
-export default EncabezadoUsuario
+export default EncabezadoUsuario;
