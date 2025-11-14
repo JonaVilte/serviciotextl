@@ -10,35 +10,19 @@ const usarEliminarPedido = () => {
     setError(null);
 
     try {
-      // 1️⃣ Obtener el pedido
-      const { data: pedido, error: errorPedido } = await supabase
-        .from('pedidos')
-        .select('*')
-        .eq('id', pedidoId)
-        .single();
-
-      console.log('Pedido encontrado:', pedido);
-
-      if (errorPedido) {
-        setError('No se encontró el pedido: ' + errorPedido.message);
-        return false;
-      }
-
-      // 2️⃣ Eliminar el pedido
-      const { data, error: errorDelete } = await supabase
+      const { error: errorDelete } = await supabase
         .from('pedidos')
         .delete()
         .eq('id', pedidoId);
 
       if (errorDelete) {
-        setError(errorDelete.message);
+        setError('No se pudo eliminar el pedido: ${errorDelete.message}');
         return false;
       }
 
-      console.log('Pedido eliminado:', data);
       return true;
     } catch (err: any) {
-      setError(err.message);
+      setError('Error inesperado: ${err.message}');
       return false;
     } finally {
       setCargando(false);
