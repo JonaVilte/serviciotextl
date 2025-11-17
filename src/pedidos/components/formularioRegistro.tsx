@@ -1,61 +1,78 @@
-// components/FormularioLogin.tsx (actualizado)
+// components/FormularioRegistro.tsx
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Eye, EyeOff } from 'lucide-react-native';
-import usarAutenticacion, { Credenciales } from '../hooks/usarAutetincacion';
-import { usarSesion } from '@/src/pedidos/hooks/usarSesion';
+import usarAutenticacion, { DatosRegistro } from '../hooks/usarAutetincacion';
 
 type Props = {
-  onInicioSesionExitoso?: () => void;
-  onIrARegistro?: () => void;
+  onRegistroExitoso?: () => void;
+  onIrALogin?: () => void;
 };
 
-const FormularioLogin = ({ onInicioSesionExitoso, onIrARegistro }: Props) => {
-  const [credenciales, setCredenciales] = useState<Credenciales>({
+const FormularioRegistro = ({ onRegistroExitoso, onIrALogin }: Props) => {
+  const [datos, setDatos] = useState<DatosRegistro>({
+    nombre: '',
     email: '',
     password: '',
   });
   const [mostrarPassword, setMostrarPassword] = useState(false);
 
-  const { iniciarSesion, cargando, error } = usarAutenticacion();
-  const { iniciarSesion: iniciarSesionGlobal } = usarSesion();
+  const { registrarse, cargando, error } = usarAutenticacion();
 
-  const manejarCambio = (campo: keyof Credenciales, valor: string) => {
-    setCredenciales((prev) => ({
+  const manejarCambio = (campo: keyof DatosRegistro, valor: string) => {
+    setDatos((prev) => ({
       ...prev,
       [campo]: valor,
     }));
   };
 
   const manejarEnvio = async () => {
-    if (!credenciales.email || !credenciales.password) {
+    if (!datos.nombre || !datos.email || !datos.password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
 
     try {
-      const usuario = await iniciarSesion(credenciales);
+      const usuario = await registrarse(datos);
 
       if (usuario) {
-        await iniciarSesionGlobal(usuario);
-        onInicioSesionExitoso?.();
+        Alert.alert('Éxito', `Cuenta creada para ${usuario.nombre}`, [
+          {
+            text: 'OK',
+            onPress: () => {
+              onRegistroExitoso?.();
+            },
+          },
+        ]);
       } else {
-        Alert.alert('Error', error || 'Credenciales incorrectas');
+        Alert.alert('Error', error || 'Error al crear la cuenta');
       }
     } catch (err) {
-      Alert.alert('Error', 'Error al iniciar sesión');
+      Alert.alert('Error', 'Error al registrarse');
     }
   };
 
   return (
     <View style={styles.contenedor}>
       <View style={styles.grupoInput}>
+        <Text style={styles.etiqueta}>Nombre</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Tu nombre"
+          value={datos.nombre}
+          onChangeText={(valor) => manejarCambio('nombre', valor)}
+          autoCapitalize="words"
+          editable={!cargando}
+        />
+      </View>
+
+      <View style={styles.grupoInput}>
         <Text style={styles.etiqueta}>Email</Text>
         <TextInput
           style={styles.input}
           placeholder="tu@email.com"
-          value={credenciales.email}
+          value={datos.email}
           onChangeText={(valor) => manejarCambio('email', valor)}
           autoCapitalize="none"
           keyboardType="email-address"
@@ -68,8 +85,8 @@ const FormularioLogin = ({ onInicioSesionExitoso, onIrARegistro }: Props) => {
         <View style={styles.contenedorPassword}>
           <TextInput
             style={[styles.input, styles.inputPassword]}
-            placeholder="Tu contraseña"
-            value={credenciales.password}
+            placeholder="Mínimo 6 caracteres"
+            value={datos.password}
             onChangeText={(valor) => manejarCambio('password', valor)}
             secureTextEntry={!mostrarPassword}
             editable={!cargando}
@@ -90,24 +107,22 @@ const FormularioLogin = ({ onInicioSesionExitoso, onIrARegistro }: Props) => {
       {error && <Text style={styles.textoError}>{error}</Text>}
 
       <TouchableOpacity
-        style={[styles.botonLogin, cargando && styles.botonDeshabilitado]}
+        style={[styles.botonRegistro, cargando && styles.botonDeshabilitado]}
         onPress={manejarEnvio}
         disabled={cargando}>
-        <Text style={styles.textoBoton}>{cargando ? 'Iniciando sesión...' : 'Iniciar Sesión'}</Text>
+        <Text style={styles.textoBoton}>{cargando ? 'Creando cuenta...' : 'Crear Cuenta'}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onIrARegistro} disabled={cargando}>
-        <Text style={styles.textoRegistro}>
-          ¿No tienes una cuenta? <Text style={styles.textoRegistroNegrita}>Regístrate</Text>
+      <TouchableOpacity onPress={onIrALogin} disabled={cargando}>
+        <Text style={styles.textoLogin}>
+          ¿Ya tienes una cuenta? <Text style={styles.textoLoginNegrita}>Inicia sesión</Text>
         </Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-// Estilos (agregar al final)
 const styles = StyleSheet.create({
-  // ... tus estilos existentes iguales ...
   contenedor: {
     width: '100%',
     gap: 20,
@@ -141,7 +156,7 @@ const styles = StyleSheet.create({
     top: 12,
     padding: 4,
   },
-  botonLogin: {
+  botonRegistro: {
     backgroundColor: '#059669',
     paddingVertical: 14,
     borderRadius: 8,
@@ -162,16 +177,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-  textoRegistro: {
+  textoLogin: {
     color: '#6b7280',
     fontSize: 14,
     textAlign: 'center',
     marginTop: 20,
   },
-  textoRegistroNegrita: {
+  textoLoginNegrita: {
     fontWeight: 'bold',
     color: '#059669',
   },
 });
 
-export default FormularioLogin;
+export default FormularioRegistro;

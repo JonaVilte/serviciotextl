@@ -11,24 +11,29 @@ export default function RootLayout() {
   useEffect(() => {
     if (cargando) return;
 
-    const inAuthGroup = segments[0] === 'login';
+    try {
+      // Conversión segura a string
+      const currentSegment = String(segments[0] || '');
+      const inAuthGroup = currentSegment === 'login' || currentSegment === 'registro';
 
-    if (!usuario && !inAuthGroup) {
-      // Redirigir al login si no hay usuario
-      router.replace('/login');
-    } else if (usuario && inAuthGroup) {
-      // Redirigir al home si ya está autenticado
-      router.replace('/(tabs)');
+      if (!usuario && !inAuthGroup) {
+        router.push('/login');
+      } else if (usuario && inAuthGroup) {
+        router.push('/(tabs)');
+      }
+    } catch (error) {
+      console.error('Error en redirección:', error);
     }
   }, [usuario, cargando, segments]);
 
   if (cargando) {
-    return null; // O un componente de loading
+    return null;
   }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="login" />
+      <Stack.Screen name="registro" />
       <Stack.Screen name="(tabs)" />
     </Stack>
   );

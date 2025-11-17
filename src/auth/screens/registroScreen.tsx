@@ -5,35 +5,35 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Alert
+  Alert,
 } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { useRouter } from 'expo-router';
-import FormularioLogin from '../../pedidos/components/formularioLogin';
+import FormularioRegistro from '../../pedidos/components/formularioRegistro';
 import { usarSesion } from '@/src/pedidos/hooks/usarSesion';
 import { useEffect } from 'react';
 
 const ShinySundayFont = Platform.select({ ios: 'System', android: 'sans-serif' });
 
-export default function LoginScreen() {
+export default function RegistroScreen() {
   const router = useRouter();
   const { usuario, cargando } = usarSesion();
 
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (usuario && !cargando) {
-      console.log('Usuario autenticado, redirigiendo a home');
-      router.replace('/(tabs)' as any);
+      router.replace('/(tabs)');
     }
   }, [usuario, cargando]);
 
-  const manejarInicioSesionExitoso = () => {
-    console.log('Inicio de sesión exitoso, redirigiendo...');
+  const manejarRegistroExitoso = () => {
+    // Redirigir al login después del registro exitoso
+    Alert.alert('Éxito', 'Cuenta creada correctamente. Ahora puedes iniciar sesión.');
+    router.replace('/login');
   };
 
-  const manejarIrARegistro = () => {
-    // SOLUCIÓN: Usar push en lugar de replace o forzar el tipo
-    router.push('/registro' as any);
+  const manejarIrALogin = () => {
+    router.replace('/login');
   };
 
   if (cargando) {
@@ -56,20 +56,23 @@ export default function LoginScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
+        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.titulo}>Bienvenido</Text>
-          <Text style={styles.subtitulo}>Inicia sesión en tu cuenta para continuar</Text>
+          <Text style={styles.titulo}>Crear Cuenta</Text>
+          <Text style={styles.subtitulo}>Regístrate para comenzar</Text>
         </View>
 
+        {/* Formulario */}
         <View style={styles.formContainer}>
-          <FormularioLogin
-            onInicioSesionExitoso={manejarInicioSesionExitoso}
-            onIrARegistro={manejarIrARegistro}
+          <FormularioRegistro
+            onRegistroExitoso={manejarRegistroExitoso}
+            onIrALogin={manejarIrALogin}
           />
         </View>
 
+        {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.textoFooter}>Usa tu email y contraseña registrados</Text>
+          <Text style={styles.textoFooter}>Usa un email válido y una contraseña segura</Text>
         </View>
       </View>
     </ScrollView>
