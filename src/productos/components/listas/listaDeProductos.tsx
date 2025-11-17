@@ -1,7 +1,7 @@
 import { View, StyleSheet, ActivityIndicator, ScrollView, Platform } from "react-native"
 import { Text } from "@/components/ui/text"
-import TarjetaProducto from "./tarjetaDeProducto"
-import { usarProductos } from "../hooks/usarProductos"
+import TarjetaProducto from "../tarjetas/tarjetaDeProducto"
+import { usarProductos } from "../../hooks/usarProductos"
 
 // Marcador de posición para la fuente
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })

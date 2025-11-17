@@ -3,7 +3,7 @@
 import { View, StyleSheet, ActivityIndicator, ScrollView, Platform, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
 import usarPedidos from "@/src/pedidos/hooks/usarIndex"
-import TarjetaParaEditarPedido from "./tarjetaParaEditarPedido"
+import TarjetaParaEditarPedido from "../tarjetas/tarjetaParaEditarPedido"
 import { useRouter } from "expo-router"
 import { Plus } from "lucide-react-native"
 

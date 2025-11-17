@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { Text } from '@/components/ui/text';
-import TarjetaParaVisualizarUnPedido from '@/src/pedidos/components/index';
+import TarjetaParaVisualizarUnPedido from '@/src/pedidos/components/tarjetas/index';
 import usarPedidos from '@/src/pedidos/hooks/usarIndex';
 
 const ListaDePedidos = () => {

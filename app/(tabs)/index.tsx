@@ -2,8 +2,8 @@
 
 import { View, StyleSheet, Platform, ActivityIndicator, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
-import EncabezadoUsuario from "@/src/pedidos/components/encabezadoUsuario"
-import ListaDeProductos from "@/src/pedidos/components/listaDeProductos"
+import EncabezadoUsuario from "@/src/pedidos/components/encabezados/encabezadoUsuario"
+import ListaDeProductos from "@/src/productos/components/listas/listaDeProductos"
 import { usarSesion } from "@/src/pedidos/hooks/usarSesion"
 import { useRouter } from "expo-router"
 

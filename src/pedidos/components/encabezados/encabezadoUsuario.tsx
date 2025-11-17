@@ -4,7 +4,7 @@ import { LogOut } from 'lucide-react-native';
 
 type Usuario = {
   id: string;
-  nonline: string; // nombre
+  nombre: string; // nombre
   email: string;
   created_at: string;
 };
@@ -29,7 +29,7 @@ const EncabezadoUsuario = ({ usuario, onCerrarSesion }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.infoUsuario}>
-        <Text style={styles.nombre}>Hola, {usuario?.nonline || 'Usuario'}</Text>
+        <Text style={styles.nombre}>Hola, {usuario?.nombre || 'Usuario'}</Text>
         <Text style={styles.email}>{usuario?.email}</Text>
       </View>
 

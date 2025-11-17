@@ -3,7 +3,7 @@
 import { View, TextInput, StyleSheet, TouchableOpacity, ScrollView, Alert } from "react-native"
 import { Text } from "@/components/ui/text"
 import { useState } from "react"
-import { usarAgregarProducto } from "@/src/pedidos/hooks/usarAgregarProducto"
+import { usarAgregarProducto } from "@/src/productos/hooks/usarAgregarProducto"
 import { useRouter } from "expo-router"
 
 const FormularioProducto = () => {

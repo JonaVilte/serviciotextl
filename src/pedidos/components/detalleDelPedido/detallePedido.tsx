@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { usarDetallesPedido } from '../hooks/usarDetallesPedido';
-import { ItemPedido } from './itemPedido';
+import { usarDetallesPedido } from '../../hooks/usarDetallesPedido';
+import { ItemPedido } from '../listasEItems/itemPedido';
 
 type Props = {
   pedidoId: string;

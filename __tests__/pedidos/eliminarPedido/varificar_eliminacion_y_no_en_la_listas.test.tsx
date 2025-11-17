@@ -1,7 +1,7 @@
 import { renderHook, waitFor, render, screen, act, fireEvent } from '@testing-library/react-native';
 import usarEliminarPedido from '@/src/pedidos/hooks/usarEliminarPedido';
-import ListaDePedidos from '@/src/pedidos/components/listaDePedidos';
-import BotonesAccion from '../../../src/pedidos/components/botonesAccion';
+import ListaDePedidos from '@/src/pedidos/components/listasEItems/listaDePedidos';
+import BotonesAccion from '../../../src/pedidos/components/accion/botonesAccion';
 import { Alert } from 'react-native';
 
 describe('Como vendedor, quiero eliminar pedidos erróneos o cancelados, para mantener el registro limpio.', () => {

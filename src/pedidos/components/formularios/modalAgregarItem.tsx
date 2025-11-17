@@ -9,8 +9,8 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { usarProductos } from '../hooks/usarProductos';
-import { agregarItemPedido } from '../hooks/usarAgregarItemPedido';
+import { usarProductos } from '../../../productos/hooks/usarProductos';
+import { agregarItemPedido } from '../../hooks/usarAgregarItemPedido';
 
 type Props = {
   visible: boolean;

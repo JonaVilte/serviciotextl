@@ -15,13 +15,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import usarEstadoDelPedido from '@/src/pedidos/hooks/usarActulizarEstadoDePedido';
 import usarUsuarios from '@/src/pedidos/hooks/usarUsuarios';
 import actualizarClientePedido from '@/src/pedidos/hooks/usarActualizarClienteDelPedido';
-import BannerPedidoEntregado from './bannerPedidoEntregado';
-import SelectorCliente from './seleccionarCliente';
-import InformacionPedido from './informacionDelPedido';
-import SelectorEstado from './seleccionarEstado';
-import BotonesAccion from './botonesAccion';
-import { DetallePedido } from './detallePedido';
-import { ModalAgregarItem } from './modalAgregarItem';
+import BannerPedidoEntregado from '../accion/bannerPedidoEntregado';
+import SelectorCliente from '../formularios/seleccionarCliente';
+import InformacionPedido from '../formularios/informacionDelPedido';
+import SelectorEstado from '../formularios/seleccionarEstado';
+import BotonesAccion from '../accion/botonesAccion';
+import { DetallePedido } from '../detalleDelPedido/detallePedido';
+import { ModalAgregarItem } from '../formularios/modalAgregarItem';
 
 // Habilitar LayoutAnimation en Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {

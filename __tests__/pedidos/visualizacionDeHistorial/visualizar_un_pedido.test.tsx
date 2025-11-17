@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react-native';
 
-import ListaDePedidos from '@/src/pedidos/components/listaDePedidos';
+import ListaDePedidos from '@/src/pedidos/components/listasEItems/listaDePedidos';
 
 describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría poder registrar mis pedidos, para poder llevar un control de las ventas.', () => {
   test('Corroborar que existen 8 pedidos registrados', async () => {

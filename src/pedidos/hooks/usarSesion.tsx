@@ -7,6 +7,7 @@ type Usuario = {
   id: string;
   nombre: string;
   email: string;
+  created_at: string;
 };
 
 const CLAVE_USUARIO = '@usuario_sesion';

@@ -1,6 +1,6 @@
 import { render, screen, renderHook, waitFor } from '@testing-library/react-native';
-import { usarAgregarProducto } from '@/src/pedidos/hooks/usarAgregarProducto';
-import ListaDeProductos from '@/src/pedidos/components/listaDeProductos';
+import { usarAgregarProducto } from '@/src/productos/hooks/usarAgregarProducto';
+import ListaDeProductos from '@/src/productos/components/listas/listaDeProductos';
 import { supabase } from '@/lib/supabaseClient';
 
 describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría poder registrar mis pedidos, para poder llevar un control de las ventas.', () => {

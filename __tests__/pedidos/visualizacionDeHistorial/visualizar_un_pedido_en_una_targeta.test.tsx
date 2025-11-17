@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 
-import TarjetaParaVisualizarUnPedidoConSupebase from '@/src/pedidos/components/index';
+import TarjetaParaVisualizarUnPedidoConSupebase from '@/src/pedidos/components/tarjetas/index';
 
 describe('Registrar pedido - Visualización de Historial - visualización de un pedido', () => {
   test('Que tenga el nombre de la persona que encargó el pedido, el estado, precio y fecha de emisión', async () => {

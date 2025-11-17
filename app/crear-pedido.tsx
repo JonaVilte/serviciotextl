@@ -4,11 +4,11 @@ import { View, StyleSheet, Platform, TouchableOpacity, ScrollView, TextInput, Al
 import { Text } from "@/components/ui/text"
 import { useRouter } from "expo-router"
 import { ArrowLeft } from "lucide-react-native"
-import { usarProductos } from "@/src/pedidos/hooks/usarProductos"
+import { usarProductos } from "@/src/productos/hooks/usarProductos"
 import { usarCrearPedido } from "@/src/pedidos/hooks/usarCrearPedido"
-import SelectorCliente from "@/src/pedidos/components/seleccionarCliente"
-import TarjetaProductoParaPedido from "@/src/pedidos/components/tarjetaProductoParaPedido"
-import ItemCarrito from "@/src/pedidos/components/itemCarrito"
+import SelectorCliente from "@/src/pedidos/components/formularios/seleccionarCliente"
+import TarjetaProductoParaPedido from "@/src/productos/components/tarjetas/tarjetaProductoParaPedido"
+import ItemCarrito from "@/src/pedidos/components/listasEItems/itemCarrito"
 import usarUsuarios  from "@/src/pedidos/hooks/usarUsuarios"
 
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
