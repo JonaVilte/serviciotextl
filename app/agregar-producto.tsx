@@ -1,10 +1,8 @@
-"use client"
-
 import { View, StyleSheet, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
 import { useRouter } from "expo-router"
 import { ArrowLeft } from "lucide-react-native"
-import FormularioProducto from "@/src/pedidos/components/formularioProducto"
+import FormularioProducto from "@/src/productos/components/formularios/formularioProducto"
 
 export default function AgregarProductoScreen() {
   const router = useRouter()

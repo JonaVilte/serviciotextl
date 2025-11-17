@@ -1,9 +1,7 @@
-"use client"
-
 import { View, StyleSheet, Platform, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
 import { useRouter } from "expo-router"
-import ListaDePedidosAdmin from "@/src/pedidos/components/listaDePedidosParaAdm"
+import ListaDePedidosAdmin from "@/src/pedidos/components/listasEItems/listaDePedidosParaAdm"
 import { ArrowLeft } from "lucide-react-native"
 
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
