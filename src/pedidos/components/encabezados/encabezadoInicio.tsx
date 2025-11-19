@@ -1,29 +1,52 @@
-import { View, StyleSheet, TouchableOpacity, Platform } from "react-native"
+// components/EncabezadoInicio.tsx
+import { View, StyleSheet, TouchableOpacity, Platform, Alert } from "react-native"
 import { Text } from "@/components/ui/text"
 import { LogOut } from "lucide-react-native"
+import { usarSesion } from '@/src/pedidos/hooks/usarSesion';
+import { useRouter } from 'expo-router';
 
-// Marcador de posición para la fuente
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 
 type Props = {
   nombreUsuario: string
   rol?: string
-  onCerrarSesion: () => void
 }
 
-const EncabezadoInicio = ({ nombreUsuario, rol = "Empleado", onCerrarSesion }: Props) => {
-  // Obtener la primera letra del nombre para el avatar
+const EncabezadoInicio = ({ nombreUsuario, rol = "Usuario" }: Props) => {
+  const { cerrarSesion } = usarSesion();
+  const router = useRouter();
+
+  const manejarCerrarSesion = async () => {
+    Alert.alert(
+      "Cerrar sesión",
+      "¿Estás seguro de que quieres cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Cerrar sesión", 
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await cerrarSesion();
+              router.replace('/login');
+            } catch (error) {
+              Alert.alert('Error', 'No se pudo cerrar sesión');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const inicial = nombreUsuario.charAt(0).toUpperCase()
 
   return (
     <View style={styles.contenedor}>
       <View style={styles.contenedorInfo}>
-        {/* Avatar circular */}
         <View style={styles.avatar}>
           <Text style={styles.textoAvatar}>{inicial}</Text>
         </View>
 
-        {/* Información del usuario */}
         <View style={styles.textos}>
           <Text style={styles.saludo}>Bienvenido,</Text>
           <Text style={styles.nombre}>{nombreUsuario}</Text>
@@ -31,8 +54,11 @@ const EncabezadoInicio = ({ nombreUsuario, rol = "Empleado", onCerrarSesion }: P
         </View>
       </View>
 
-      {/* Botón de cerrar sesión */}
-      <TouchableOpacity style={styles.botonCerrarSesion} onPress={onCerrarSesion} activeOpacity={0.7}>
+      <TouchableOpacity 
+        style={styles.botonCerrarSesion} 
+        onPress={manejarCerrarSesion} 
+        activeOpacity={0.7}
+      >
         <LogOut size={24} color="#ef4444" strokeWidth={2} />
       </TouchableOpacity>
     </View>

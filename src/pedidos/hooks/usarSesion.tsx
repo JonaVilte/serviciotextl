@@ -1,5 +1,4 @@
-'use client';
-
+// hooks/usarSesion.ts
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -16,59 +15,49 @@ export function usarSesion() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [cargando, setCargando] = useState(true);
 
-  // Guardar usuario en AsyncStorage
-  const guardarUsuario = async (usuarioData: Usuario | null) => {
-    try {
-      if (usuarioData) {
-        await AsyncStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuarioData));
-      } else {
-        await AsyncStorage.removeItem(CLAVE_USUARIO);
-      }
-    } catch (error) {
-      console.error('Error guardando sesión:', error);
-    }
-  };
+  useEffect(() => {
+    cargarSesion();
+  }, []);
 
-  // Cargar usuario desde AsyncStorage
   const cargarSesion = async () => {
     try {
-      setCargando(true);
-
       const usuarioGuardado = await AsyncStorage.getItem(CLAVE_USUARIO);
-
+      
       if (usuarioGuardado) {
         const usuarioData = JSON.parse(usuarioGuardado);
         setUsuario(usuarioData);
-      } else {
-        setUsuario(null);
       }
-    } catch (err) {
-      console.error('Error al cargar sesión:', err);
-      setUsuario(null);
+    } catch (error) {
+      console.error('Error al cargar sesión:', error);
     } finally {
       setCargando(false);
     }
   };
 
   const iniciarSesion = async (usuarioData: Usuario) => {
-    setUsuario(usuarioData);
-    await guardarUsuario(usuarioData);
+    try {
+      await AsyncStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuarioData));
+      setUsuario(usuarioData);
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      throw error;
+    }
   };
 
   const cerrarSesion = async () => {
-    setUsuario(null);
-    await guardarUsuario(null);
+    try {
+      await AsyncStorage.removeItem(CLAVE_USUARIO);
+      setUsuario(null);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      throw error;
+    }
   };
-
-  useEffect(() => {
-    cargarSesion();
-  }, []);
 
   return {
     usuario,
     cargando,
-    cerrarSesion,
     iniciarSesion,
-    recargarUsuario: cargarSesion,
+    cerrarSesion,
   };
 }

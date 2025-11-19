@@ -1,57 +1,54 @@
-import {
-  View,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
+// app/registro.tsx
+import React, { useState } from 'react';
+import { 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
   ScrollView,
-  ActivityIndicator,
-  Alert,
+  Platform,
+  Alert 
 } from 'react-native';
 import { Text } from '@/components/ui/text';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import FormularioRegistro from '../../pedidos/components/formularioRegistro';
-import { usarSesion } from '@/src/pedidos/hooks/usarSesion';
-import { useEffect } from 'react';
-
-const ShinySundayFont = Platform.select({ ios: 'System', android: 'sans-serif' });
+import usarAutenticacion from '@/src/pedidos/hooks/usarAutetincacion';
 
 export default function RegistroScreen() {
+  const [nombre, setNombre] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  
   const router = useRouter();
-  const { usuario, cargando } = usarSesion();
+  const { registrarse, cargando, error } = usarAutenticacion();
 
-  // Redirigir si ya está autenticado
-  useEffect(() => {
-    if (usuario && !cargando) {
-      router.replace('/(tabs)');
+  const manejarRegistro = async () => {
+    if (!nombre || !email || !password) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
     }
-  }, [usuario, cargando]);
 
-  const manejarRegistroExitoso = () => {
-    // Redirigir al login después del registro exitoso
-    Alert.alert('Éxito', 'Cuenta creada correctamente. Ahora puedes iniciar sesión.');
-    router.replace('/login');
+    try {
+      const usuario = await registrarse({ nombre, email, password });
+      
+      if (usuario) {
+        Alert.alert(
+          'Cuenta creada', 
+          'Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión.',
+          [{ text: 'OK', onPress: () => router.replace('/login') }]
+        );
+      } else {
+        Alert.alert('Error', error || 'Error al crear la cuenta');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Error al crear la cuenta');
+    }
   };
 
-  const manejarIrALogin = () => {
-    router.replace('/login');
+  const irALogin = () => {
+    router.push('/login');
   };
-
-  if (cargando) {
-    return (
-      <View style={styles.centrado}>
-        <Text style={styles.textoCargando}>Cargando...</Text>
-      </View>
-    );
-  }
-
-  if (usuario) {
-    return (
-      <View style={styles.centrado}>
-        <ActivityIndicator size="large" color="#059669" />
-        <Text style={styles.textoCargando}>Redirigiendo...</Text>
-      </View>
-    );
-  }
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -64,15 +61,71 @@ export default function RegistroScreen() {
 
         {/* Formulario */}
         <View style={styles.formContainer}>
-          <FormularioRegistro
-            onRegistroExitoso={manejarRegistroExitoso}
-            onIrALogin={manejarIrALogin}
-          />
-        </View>
+          {/* Nombre Input */}
+          <View style={styles.inputContainer}>
+            <User size={20} color="#6b7280" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Nombre completo"
+              value={nombre}
+              onChangeText={setNombre}
+              autoCapitalize="words"
+              editable={!cargando}
+            />
+          </View>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.textoFooter}>Usa un email válido y una contraseña segura</Text>
+          {/* Email Input */}
+          <View style={styles.inputContainer}>
+            <Mail size={20} color="#6b7280" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!cargando}
+            />
+          </View>
+
+          {/* Password Input */}
+          <View style={styles.inputContainer}>
+            <Lock size={20} color="#6b7280" style={styles.inputIcon} />
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Contraseña (mínimo 6 caracteres)"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!mostrarPassword}
+              editable={!cargando}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setMostrarPassword(!mostrarPassword)}>
+              {mostrarPassword ? (
+                <EyeOff size={20} color="#6b7280" />
+              ) : (
+                <Eye size={20} color="#6b7280" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Register Button */}
+          <TouchableOpacity
+            style={[styles.registerButton, cargando && styles.buttonDisabled]}
+            onPress={manejarRegistro}
+            disabled={cargando}>
+            <Text style={styles.registerButtonText}>
+              {cargando ? 'Creando cuenta...' : 'Crear Cuenta'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Login Link */}
+          <TouchableOpacity onPress={irALogin} disabled={cargando}>
+            <Text style={styles.loginText}>
+              ¿Ya tienes cuenta? <Text style={styles.loginLink}>Inicia sesión</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -80,17 +133,6 @@ export default function RegistroScreen() {
 }
 
 const styles = StyleSheet.create({
-  centrado: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-  textoCargando: {
-    marginTop: 15,
-    color: '#6b7280',
-    fontSize: 16,
-  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -100,37 +142,76 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 80,
     paddingBottom: 40,
-    justifyContent: 'space-between',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 60,
   },
   titulo: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#1f2937',
     marginBottom: 8,
-    fontFamily: ShinySundayFont,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
   },
   subtitulo: {
     fontSize: 16,
     color: '#6b7280',
     textAlign: 'center',
-    fontFamily: ShinySundayFont,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
   },
   formContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    gap: 20,
   },
-  footer: {
+  inputContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 40,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 12,
+    backgroundColor: '#f9fafb',
   },
-  textoFooter: {
+  inputIcon: {
+    marginLeft: 16,
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#1f2937',
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 16,
+    padding: 4,
+  },
+  registerButton: {
+    backgroundColor: '#059669',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: '#9ca3af',
+  },
+  registerButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  loginText: {
     color: '#6b7280',
     fontSize: 14,
     textAlign: 'center',
-    fontFamily: ShinySundayFont,
+    marginTop: 20,
+  },
+  loginLink: {
+    color: '#059669',
+    fontWeight: '600',
   },
 });

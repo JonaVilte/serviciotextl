@@ -1,19 +1,21 @@
-"use client"
-
+// app/(tabs)/index.tsx
 import { View, StyleSheet, Platform, ActivityIndicator, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
-import EncabezadoUsuario from "@/src/pedidos/components/encabezados/encabezadoUsuario"
-import ListaDeProductos from "@/src/productos/components/listas/listaDeProductos"
-import { usarSesion } from "@/src/pedidos/hooks/usarSesion"
 import { useRouter } from "expo-router"
+import { usarSesion } from "@/src/pedidos/hooks/usarSesion"
+import EncabezadoInicio from "@/src/pedidos/components/encabezados/encabezadoInicio"
+
+// Reemplaza estos componentes con los tuyos o mantén los placeholders
+import ListaDeProductos from "@/src/productos/components/listas/listaDeProductos"
 
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 const ACCENT_COLOR = "#059669"
 
 export default function HomeScreen() {
   const router = useRouter()
-  const { usuario, cargando, cerrarSesion } = usarSesion()
+  const { usuario, cargando } = usarSesion()
 
+  // Si está cargando, mostrar spinner
   if (cargando) {
     return (
       <View style={styles.centrado}>
@@ -23,18 +25,35 @@ export default function HomeScreen() {
     )
   }
 
+  // Si no hay usuario (no debería pasar por el layout, pero por seguridad)
+  if (!usuario) {
+    return (
+      <View style={styles.centrado}>
+        <Text style={styles.textoCargando}>No autenticado</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
-      <EncabezadoUsuario usuario={usuario} onCerrarSesion={cerrarSesion} />
+      {/* Encabezado con información del usuario */}
+      <EncabezadoInicio 
+        nombreUsuario={usuario.nombre} 
+        rol="Usuario" 
+      />
 
       <View style={styles.contenido}>
         <View style={styles.seccionTitulo}>
           <Text style={styles.titulo}>Productos</Text>
-          <TouchableOpacity style={styles.botonAgregar} onPress={() => router.push("/agregar-producto")}>
+          <TouchableOpacity 
+            style={styles.botonAgregar} 
+            onPress={() => router.push("/agregar-producto")}
+          >
             <Text style={styles.textoBotonAgregar}>+ Agregar</Text>
           </TouchableOpacity>
         </View>
 
+        {/* Lista de productos */}
         <ListaDeProductos />
       </View>
     </View>
@@ -44,13 +63,13 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffffff",
+    backgroundColor: "#ffffff",
   },
   centrado: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFDF6",
+    backgroundColor: "#ffffff",
   },
   textoCargando: {
     marginTop: 15,

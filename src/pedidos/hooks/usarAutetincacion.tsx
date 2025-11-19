@@ -25,6 +25,8 @@ const usarAutenticacion = () => {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const limpiarError = () => setError(null);
+
   const validarEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -36,10 +38,9 @@ const usarAutenticacion = () => {
 
   const iniciarSesion = async (credenciales: Credenciales): Promise<Usuario | null> => {
     setCargando(true);
-    setError(null);
+    limpiarError();
 
     try {
-      // Validaciones
       if (!credenciales.email || !credenciales.password) {
         setError('Email y contraseña son requeridos');
         return null;
@@ -50,7 +51,6 @@ const usarAutenticacion = () => {
         return null;
       }
 
-      // Buscar usuario
       const { data, error: errorSupabase } = await supabase
         .from('usuarios')
         .select('id, nombre, email, created_at')
@@ -59,17 +59,13 @@ const usarAutenticacion = () => {
         .single();
 
       if (errorSupabase) {
-        if (errorSupabase.code === 'PGRST116') {
-          setError('Credenciales incorrectas');
-        } else {
-          setError('Error al iniciar sesión');
-        }
+        setError('Credenciales incorrectas');
         return null;
       }
 
       return data;
     } catch (err) {
-      setError('Error inesperado al iniciar sesión');
+      setError('Error al iniciar sesión');
       return null;
     } finally {
       setCargando(false);
@@ -78,10 +74,9 @@ const usarAutenticacion = () => {
 
   const registrarse = async (datos: DatosRegistro): Promise<Usuario | null> => {
     setCargando(true);
-    setError(null);
+    limpiarError();
 
     try {
-      // Validaciones
       if (!datos.nombre || !datos.email || !datos.password) {
         setError('Todos los campos son requeridos');
         return null;
@@ -130,7 +125,7 @@ const usarAutenticacion = () => {
 
       return data;
     } catch (err) {
-      setError('Error inesperado al registrarse');
+      setError('Error al crear la cuenta');
       return null;
     } finally {
       setCargando(false);
@@ -142,6 +137,7 @@ const usarAutenticacion = () => {
     registrarse,
     cargando,
     error,
+    limpiarError,
   };
 };
 

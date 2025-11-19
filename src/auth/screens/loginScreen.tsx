@@ -1,75 +1,116 @@
-import {
-  View,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
+// app/login.tsx
+import React, { useState } from 'react';
+import { 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
   ScrollView,
-  ActivityIndicator,
-  Alert
+  Platform,
+  Alert 
 } from 'react-native';
 import { Text } from '@/components/ui/text';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import FormularioLogin from '../../pedidos/components/formularioLogin';
+import usarAutenticacion from '@/src/pedidos/hooks/usarAutetincacion';
 import { usarSesion } from '@/src/pedidos/hooks/usarSesion';
-import { useEffect } from 'react';
-
-const ShinySundayFont = Platform.select({ ios: 'System', android: 'sans-serif' });
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+  
   const router = useRouter();
-  const { usuario, cargando } = usarSesion();
+  const { iniciarSesion: iniciarSesionGlobal } = usarSesion();
+  const { iniciarSesion, cargando, error } = usarAutenticacion();
 
-  // Redirigir si ya está autenticado
-  useEffect(() => {
-    if (usuario && !cargando) {
-      console.log('Usuario autenticado, redirigiendo a home');
-      router.replace('/(tabs)' as any);
+  const manejarLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
     }
-  }, [usuario, cargando]);
 
-  const manejarInicioSesionExitoso = () => {
-    console.log('Inicio de sesión exitoso, redirigiendo...');
+    try {
+      const usuario = await iniciarSesion({ email, password });
+      
+      if (usuario) {
+        await iniciarSesionGlobal(usuario);
+        router.replace('/(tabs)');
+      } else {
+        Alert.alert('Error', error || 'Credenciales incorrectas');
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Error al iniciar sesión');
+    }
   };
 
-  const manejarIrARegistro = () => {
-    // SOLUCIÓN: Usar push en lugar de replace o forzar el tipo
-    router.push('/registro' as any);
+  const irARegistro = () => {
+    router.push('/registro');
   };
-
-  if (cargando) {
-    return (
-      <View style={styles.centrado}>
-        <Text style={styles.textoCargando}>Cargando...</Text>
-      </View>
-    );
-  }
-
-  if (usuario) {
-    return (
-      <View style={styles.centrado}>
-        <ActivityIndicator size="large" color="#059669" />
-        <Text style={styles.textoCargando}>Redirigiendo...</Text>
-      </View>
-    );
-  }
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
+        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.titulo}>Bienvenido</Text>
-          <Text style={styles.subtitulo}>Inicia sesión en tu cuenta para continuar</Text>
+          <Text style={styles.subtitulo}>Inicia sesión en tu cuenta</Text>
         </View>
 
+        {/* Formulario */}
         <View style={styles.formContainer}>
-          <FormularioLogin
-            onInicioSesionExitoso={manejarInicioSesionExitoso}
-            onIrARegistro={manejarIrARegistro}
-          />
-        </View>
+          {/* Email Input */}
+          <View style={styles.inputContainer}>
+            <Mail size={20} color="#6b7280" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!cargando}
+            />
+          </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.textoFooter}>Usa tu email y contraseña registrados</Text>
+          {/* Password Input */}
+          <View style={styles.inputContainer}>
+            <Lock size={20} color="#6b7280" style={styles.inputIcon} />
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!mostrarPassword}
+              editable={!cargando}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setMostrarPassword(!mostrarPassword)}>
+              {mostrarPassword ? (
+                <EyeOff size={20} color="#6b7280" />
+              ) : (
+                <Eye size={20} color="#6b7280" />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Login Button */}
+          <TouchableOpacity
+            style={[styles.loginButton, cargando && styles.buttonDisabled]}
+            onPress={manejarLogin}
+            disabled={cargando}>
+            <Text style={styles.loginButtonText}>
+              {cargando ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Register Link */}
+          <TouchableOpacity onPress={irARegistro} disabled={cargando}>
+            <Text style={styles.registerText}>
+              ¿No tienes cuenta? <Text style={styles.registerLink}>Regístrate</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -77,17 +118,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  centrado: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-  textoCargando: {
-    marginTop: 15,
-    color: '#6b7280',
-    fontSize: 16,
-  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -97,37 +127,76 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 80,
     paddingBottom: 40,
-    justifyContent: 'space-between',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 60,
   },
   titulo: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#1f2937',
     marginBottom: 8,
-    fontFamily: ShinySundayFont,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
   },
   subtitulo: {
     fontSize: 16,
     color: '#6b7280',
     textAlign: 'center',
-    fontFamily: ShinySundayFont,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif' }),
   },
   formContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    gap: 24,
   },
-  footer: {
+  inputContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 40,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 12,
+    backgroundColor: '#f9fafb',
   },
-  textoFooter: {
+  inputIcon: {
+    marginLeft: 16,
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#1f2937',
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 16,
+    padding: 4,
+  },
+  loginButton: {
+    backgroundColor: '#059669',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: '#9ca3af',
+  },
+  loginButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  registerText: {
     color: '#6b7280',
     fontSize: 14,
     textAlign: 'center',
-    fontFamily: ShinySundayFont,
+    marginTop: 20,
+  },
+  registerLink: {
+    color: '#059669',
+    fontWeight: '600',
   },
 });
