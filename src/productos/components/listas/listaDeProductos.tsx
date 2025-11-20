@@ -1,14 +1,31 @@
-import { View, StyleSheet, ActivityIndicator, ScrollView, Platform } from "react-native"
+// src/productos/components/listas/listaDeProductos.tsx
+import { 
+  View, 
+  StyleSheet, 
+  ActivityIndicator, 
+  ScrollView, 
+  Platform 
+} from "react-native"
 import { Text } from "@/components/ui/text"
 import TarjetaProducto from "../tarjetas/tarjetaDeProducto"
 import { usarProductos } from "../../hooks/usarProductos"
+import { useState } from "react"
+import BuscadorProductos from "../buscador/buscadorDeProductos"
+import { useBuscarProductos } from "../../hooks/usarBuscarProductos"
 
-// Marcador de posición para la fuente
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 const ACCENT_COLOR = "#059669"
 
 const ListaDeProductos = () => {
   const { productos, loading, error } = usarProductos()
+  const { 
+    terminoBusqueda, 
+    setTerminoBusqueda,
+    productosFiltrados 
+  } = useBuscarProductos({ productos })
+
+  // Debug simple
+  console.log('Productos:', productos.length, 'Filtrados:', productosFiltrados.length, 'Búsqueda:', terminoBusqueda)
 
   if (loading) {
     return (
@@ -27,30 +44,55 @@ const ListaDeProductos = () => {
     )
   }
 
-  if (productos.length === 0) {
-    return (
-      <View style={styles.centrado}>
-        <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
-      </View>
-    )
-  }
-
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      {productos.map((producto) => (
-        <TarjetaProducto key={producto.id} producto={producto} />
-      ))}
-    </ScrollView>
+    <View style={styles.contenedor}>
+      <BuscadorProductos
+        terminoBusqueda={terminoBusqueda}
+        onTerminoChange={setTerminoBusqueda}
+        placeholder="Buscar productos por nombre..."
+      />
+
+      {terminoBusqueda && (
+        <View style={styles.infoBusqueda}>
+          <Text style={styles.textoInfo}>
+            {productosFiltrados.length === 0 
+              ? 'No se encontraron productos' 
+              : `Encontrados: ${productosFiltrados.length} producto${productosFiltrados.length !== 1 ? 's' : ''}`
+            }
+          </Text>
+        </View>
+      )}
+
+      {productosFiltrados.length === 0 && terminoBusqueda ? (
+        <View style={styles.centrado}>
+          <Text style={styles.textoVacio}>
+            No se encontraron productos que coincidan con "{terminoBusqueda}"
+          </Text>
+        </View>
+      ) : productosFiltrados.length === 0 ? (
+        <View style={styles.centrado}>
+          <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
+        </View>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {productosFiltrados.map((producto) => (
+            <TarjetaProducto key={producto.id} producto={producto} />
+          ))}
+        </ScrollView>
+      )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  contenedor: {
+    flex: 1,
+  },
   centrado: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#FFFDF6",
   },
   textoCargando: {
     marginTop: 15,
@@ -68,6 +110,17 @@ const styles = StyleSheet.create({
   textoVacio: {
     color: "#4b5563",
     fontSize: 18,
+    fontWeight: "500",
+    textAlign: "center",
+    fontFamily: ShinySundayFont,
+  },
+  infoBusqueda: {
+    paddingHorizontal: 8,
+    marginBottom: 12,
+  },
+  textoInfo: {
+    color: "#059669",
+    fontSize: 14,
     fontWeight: "500",
     fontFamily: ShinySundayFont,
   },
