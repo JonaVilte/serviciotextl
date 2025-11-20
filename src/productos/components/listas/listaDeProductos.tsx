@@ -10,8 +10,10 @@ import { Text } from "@/components/ui/text"
 import TarjetaProducto from "../tarjetas/tarjetaDeProducto"
 import { usarProductos } from "../../hooks/usarProductos"
 import { useState } from "react"
-import BuscadorProductos from "../buscador/buscadorDeProductos"
+import BuscadorProductos from "..//buscador/buscadorDeProductos"
 import { useBuscarProductos } from "../../hooks/usarBuscarProductos"
+import { useBajoStock } from "../../hooks/bajoStock"
+import AlertaBajoStock from "../alertas/alertaDeStock"
 
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 const ACCENT_COLOR = "#059669"
@@ -23,9 +25,11 @@ const ListaDeProductos = () => {
     setTerminoBusqueda,
     productosFiltrados 
   } = useBuscarProductos({ productos })
-
-  // Debug simple
-  console.log('Productos:', productos.length, 'Filtrados:', productosFiltrados.length, 'Búsqueda:', terminoBusqueda)
+  
+  const { 
+    totalBajoStock,
+    umbralBajoStock 
+  } = useBajoStock({ productos: productosFiltrados })
 
   if (loading) {
     return (
@@ -52,6 +56,13 @@ const ListaDeProductos = () => {
         placeholder="Buscar productos por nombre..."
       />
 
+      {/* Alerta general de bajo stock */}
+      <AlertaBajoStock 
+        totalBajoStock={totalBajoStock}
+        umbralBajoStock={umbralBajoStock}
+      />
+
+      {/* Información de búsqueda */}
       {terminoBusqueda && (
         <View style={styles.infoBusqueda}>
           <Text style={styles.textoInfo}>
@@ -63,6 +74,7 @@ const ListaDeProductos = () => {
         </View>
       )}
 
+      {/* Lista de productos */}
       {productosFiltrados.length === 0 && terminoBusqueda ? (
         <View style={styles.centrado}>
           <Text style={styles.textoVacio}>
