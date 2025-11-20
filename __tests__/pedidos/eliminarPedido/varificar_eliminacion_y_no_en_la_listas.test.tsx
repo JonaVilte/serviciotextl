@@ -11,10 +11,12 @@ describe('Como vendedor, quiero eliminar pedidos erróneos o cancelados, para ma
     await waitFor(() => expect(screen.queryByText('Cargando pedidos...')).toBeNull(), {
       timeout: 3000,
     });
-    const headings = screen.getAllByRole('heading', { name: /Pedido de Jonatan/i });
+
+    const heading = screen.getByRole('heading', { name: /Pedido de Jonatan/i });
+    expect(heading).toHaveTextContent('Pedido de Jonatan');
 
     const { result } = renderHook(() => usarEliminarPedido());
-    
+
     await act(async () => {
       const success = await result.current.eliminarPedido('b7321a6a-0e7f-44e5-9668-cdb9557e2b99');
       expect(success).toBe(true);
@@ -24,17 +26,14 @@ describe('Como vendedor, quiero eliminar pedidos erróneos o cancelados, para ma
       expect(result.current.cargando).toBe(false);
     });
 
-    expect(screen.queryByText('Jonatan')).toBeNull();
+    expect(screen.queryByRole('heading', { name: /Pedido de Jonatan/i })).toBeNull();
   });
 
   test('El sistema pide confirmación antes de eliminar.', () => {
     const alertSpy = jest.spyOn(Alert, 'alert');
 
     const { getByText } = render(
-      <BotonesAccion
-        pedidoId="fe3ab5e8-6565-4630-b1c8-fd9c64b19cfa"
-        pedidoEntregado={false}
-      />
+      <BotonesAccion pedidoId="fe3ab5e8-6565-4630-b1c8-fd9c64b19cfa" pedidoEntregado={false} />
     );
 
     fireEvent.press(getByText('Eliminar'));
@@ -45,5 +44,4 @@ describe('Como vendedor, quiero eliminar pedidos erróneos o cancelados, para ma
       expect.any(Array)
     );
   });
-
-})
+});
