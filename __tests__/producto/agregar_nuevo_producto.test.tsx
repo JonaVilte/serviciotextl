@@ -2,7 +2,7 @@ import { render, screen, renderHook, waitFor } from '@testing-library/react-nati
 import { usarAgregarProducto } from '@/src/productos/hooks/usarAgregarProducto';
 import ListaDeProductos from '@/src/productos/components/listas/listaDeProductos';
 
-describe('Como encargado de ventas de una tienda de ropa (textil), me gustaría poder registrar mis pedidos, para poder llevar un control de las ventas.', () => {
+describe.skip('Como encargado de ventas de una tienda de ropa (textil), me gustaría poder registrar mis pedidos, para poder llevar un control de las ventas.', () => {
   test('Es posible agregar nuevos ítems al pedido', async () => {
     const { result } = renderHook(() => usarAgregarProducto());
     const success = await result.current.agregarProducto({

@@ -20,4 +20,17 @@ describe('Como empleado de una tienda de ropa, me gustaría poder visualizar un 
 
     expect(queryByText('Alerta de Bajo Stock')).toBeNull();
   });
+
+  test('Cuando el producto es reestablecido el mensaje debe desaparecer automáticamente', () => {
+    const { getByText, queryByText, rerender } = render(
+      <AlertaBajoStock totalBajoStock={2} umbralBajoStock={10} />
+    );
+
+    expect(getByText('Alerta de Bajo Stock')).toBeTruthy();
+    expect(getByText('Tienes 2 productos con stock bajo (≤ 10 unidades)')).toBeTruthy();
+
+    rerender(<AlertaBajoStock totalBajoStock={0} umbralBajoStock={10} />);
+
+    expect(queryByText('Alerta de Bajo Stock')).toBeNull();
+  });
 });

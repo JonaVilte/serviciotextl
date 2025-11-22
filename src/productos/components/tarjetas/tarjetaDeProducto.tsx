@@ -1,10 +1,11 @@
 // src/productos/components/tarjetas/tarjetaDeProducto.tsx
-import { View, StyleSheet, Platform } from "react-native"
+import { View, StyleSheet, Platform, TouchableOpacity } from "react-native"
 import { Text } from "@/components/ui/text"
 import { Colors } from "@/constants/colors"
 import { AlertTriangle } from "lucide-react-native"
+import { useState } from "react"
+import ModalEditorStock from "../iditar/modalParaEditaStock"
 
-// Marcador de posición para la fuente
 const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
 const ACCENT_COLOR = "#059669"
 const UMBRAL_BAJO_STOCK = 10
@@ -22,81 +23,102 @@ type Producto = {
 
 type Props = {
   producto: Producto
+  onActualizarStock: (productoId: string, nuevoStock: number) => Promise<boolean>
 }
 
-const TarjetaProducto = ({ producto }: Props) => {
+const TarjetaProducto = ({ producto, onActualizarStock }: Props) => {
+  const [modalVisible, setModalVisible] = useState(false)
   const tieneBajoStock = producto.stock <= UMBRAL_BAJO_STOCK
 
+  const handlePress = () => {
+    setModalVisible(true)
+  }
+
   return (
-    <View style={[
-      styles.tarjeta,
-      tieneBajoStock && styles.tarjetaBajoStock
-    ]}>
-      {/* Nombre y precio */}
-      <View style={styles.encabezado}>
-        <Text style={styles.nombre}>{producto.nombre}</Text>
-        <Text style={styles.precio}>${producto.precio.toFixed(2)}</Text>
-      </View>
-
-      {/* Descripción */}
-      {producto.descripcion && <Text style={styles.descripcion}>{producto.descripcion}</Text>}
-
-      {/* Detalles: categoría y stock */}
-      <View style={styles.detalles}>
-        <View style={styles.detalle}>
-          <View style={styles.iconoTag}>
-            <Text style={styles.iconoTexto}>🏷️</Text>
+    <>
+      <TouchableOpacity onPress={handlePress}>
+        <View style={[
+          styles.tarjeta,
+          tieneBajoStock && styles.tarjetaBajoStock
+        ]}>
+          {/* Nombre y precio */}
+          <View style={styles.encabezado}>
+            <Text style={styles.nombre}>{producto.nombre}</Text>
+            <Text style={styles.precio}>${producto.precio.toFixed(2)}</Text>
           </View>
-          <Text style={styles.textoDetalle}>{producto.categoria || "Alien"}</Text>
+
+          {/* Descripción */}
+          {producto.descripcion ? (
+            <Text style={styles.descripcion}>{producto.descripcion}</Text>
+          ) : null}
+
+          {/* Detalles: categoría y stock */}
+          <View style={styles.detalles}>
+            <View style={styles.detalle}>
+              <View style={styles.iconoTag}>
+                <Text style={styles.iconoTexto}>🏷️</Text>
+              </View>
+              <Text style={styles.textoDetalle}>{producto.categoria || "Alien"}</Text>
+            </View>
+
+            <View style={styles.detalle}>
+              <View style={styles.iconoPaquete}>
+                <Text style={styles.iconoTexto}>📦</Text>
+              </View>
+              <Text style={[
+                styles.textoDetalle,
+                tieneBajoStock && styles.stockBajo
+              ]}>
+                Stock: {producto.stock}
+              </Text>
+            </View>
+          </View>
+
+          {/* Tags de talla y color */}
+          <View style={styles.tags}>
+            {producto.talla ? (
+              <View style={styles.tag}>
+                <Text style={styles.textoTag}>Talla: {producto.talla}</Text>
+              </View>
+            ) : null}
+            
+            {producto.color ? (
+              <View style={styles.tag}>
+                <Text style={styles.textoTag}>Color: {producto.color}</Text>
+              </View>
+            ) : null}
+            
+            {/* Indicador de bajo stock */}
+            {tieneBajoStock ? (
+              <View style={styles.tagAlerta}>
+                <AlertTriangle size={12} color="#dc2626" />
+                <Text style={styles.textoTagAlerta}>Bajo Stock</Text>
+              </View>
+            ) : null}
+          </View>
+
+          {/* Mensaje de alerta adicional para stock muy bajo */}
+          {tieneBajoStock ? (
+            <View style={styles.alertaContainer}>
+              <AlertTriangle size={14} color="#dc2626" />
+              <Text style={styles.textoAlerta}>
+                {producto.stock === 0 
+                  ? "¡Producto agotado!" 
+                  : `Solo quedan ${producto.stock} unidades`}
+              </Text>
+            </View>
+          ) : null}
         </View>
+      </TouchableOpacity>
 
-        <View style={styles.detalle}>
-          <View style={styles.iconoPaquete}>
-            <Text style={styles.iconoTexto}>📦</Text>
-          </View>
-          <Text style={[
-            styles.textoDetalle,
-            tieneBajoStock && styles.stockBajo
-          ]}>
-            Stock: {producto.stock}
-          </Text>
-        </View>
-      </View>
-
-      {/* Tags de talla y color */}
-      <View style={styles.tags}>
-        {producto.talla && (
-          <View style={styles.tag}>
-            <Text style={styles.textoTag}>Talla: {producto.talla}</Text>
-          </View>
-        )}
-        {producto.color && (
-          <View style={styles.tag}>
-            <Text style={styles.textoTag}>Color: {producto.color}</Text>
-          </View>
-        )}
-        
-        {/* Indicador de bajo stock */}
-        {tieneBajoStock && (
-          <View style={styles.tagAlerta}>
-            <AlertTriangle size={12} color="#dc2626" />
-            <Text style={styles.textoTagAlerta}>Bajo Stock</Text>
-          </View>
-        )}
-      </View>
-
-      {/* Mensaje de alerta adicional para stock muy bajo */}
-      {tieneBajoStock && (
-        <View style={styles.alertaContainer}>
-          <AlertTriangle size={14} color="#dc2626" />
-          <Text style={styles.textoAlerta}>
-            {producto.stock === 0 
-              ? "¡Producto agotado!" 
-              : `Solo quedan ${producto.stock} unidades`}
-          </Text>
-        </View>
-      )}
-    </View>
+      <ModalEditorStock
+        producto={producto}
+        visible={modalVisible}
+        onCerrar={() => setModalVisible(false)}
+        onStockActualizado={onActualizarStock}
+        umbralBajoStock={UMBRAL_BAJO_STOCK}
+      />
+    </>
   )
 }
 

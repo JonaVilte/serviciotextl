@@ -1,3 +1,4 @@
+// src/productos/hooks/usarProductos.ts
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabaseClient"
 
@@ -25,7 +26,7 @@ export function usarProductos() {
       const { data, error: supabaseError } = await supabase
         .from("productos")
         .select("id, nombre, descripcion, precio, stock, categoria, talla, color")
-        .gt("stock", 0) // Solo productos con stock disponible
+        .gt("stock", 0)
         .order("nombre", { ascending: true })
 
       if (supabaseError) {
@@ -41,9 +42,39 @@ export function usarProductos() {
     }
   }
 
+  // Función para actualizar el stock de un producto
+  const actualizarStock = async (productoId: string, nuevoStock: number) => {
+    try {
+      const { error: supabaseError } = await supabase
+        .from("productos")
+        .update({ stock: nuevoStock })
+        .eq("id", productoId)
+
+      if (supabaseError) {
+        throw new Error(supabaseError.message)
+      }
+
+      // Actualizar el estado local inmediatamente
+      setProductos(prev => prev.map(p => 
+        p.id === productoId ? { ...p, stock: nuevoStock } : p
+      ))
+
+      return true
+    } catch (err) {
+      setError("Error al actualizar el stock")
+      return false
+    }
+  }
+
   useEffect(() => {
     cargarProductos()
   }, [])
 
-  return { productos, loading, error, recargarProductos: cargarProductos }
+  return { 
+    productos, 
+    loading, 
+    error, 
+    recargarProductos: cargarProductos,
+    actualizarStock
+  }
 }
