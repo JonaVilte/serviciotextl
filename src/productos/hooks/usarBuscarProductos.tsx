@@ -1,7 +1,6 @@
-// src/productos/hooks/useBuscarProductos.ts
-import { useState, useMemo } from 'react';
+// src/productos/hooks/usarBuscarProductos.ts
+import { useState, useMemo, useEffect } from 'react';
 
-// Usamos el mismo tipo que en usarProductos
 type Producto = {
   id: string;
   nombre: string;
@@ -15,25 +14,56 @@ type Producto = {
 
 export const useBuscarProductos = ({ productos }: { productos: Producto[] }) => {
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
+  const [terminoDebounce, setTerminoDebounce] = useState('');
+  const [buscando, setBuscando] = useState(false);
+
+  // Debounce para delay en la búsqueda
+  useEffect(() => {
+    if (terminoBusqueda.trim() === '') {
+      setTerminoDebounce('');
+      setBuscando(false);
+      return;
+    }
+
+    setBuscando(true);
+    
+    const timer = setTimeout(() => {
+      setTerminoDebounce(terminoBusqueda);
+      setBuscando(false);
+    }, 500); // 500ms de delay
+
+    return () => {
+      clearTimeout(timer);
+      setBuscando(false);
+    };
+  }, [terminoBusqueda]);
 
   const productosFiltrados = useMemo(() => {
     // Si no hay término de búsqueda, mostrar todos los productos
-    if (!terminoBusqueda.trim()) {
+    if (!terminoDebounce.trim()) {
       return productos;
     }
 
     // Filtrar productos por nombre (case-insensitive)
-    const terminoLower = terminoBusqueda.toLowerCase().trim();
+    const terminoLower = terminoDebounce.toLowerCase().trim();
     
     return productos.filter(producto => 
       producto.nombre.toLowerCase().includes(terminoLower)
     );
-  }, [productos, terminoBusqueda]);
+  }, [productos, terminoDebounce]);
+
+  // Calcular si no se encontraron productos
+  const noSeEncontraronProductos = 
+    terminoDebounce.trim() !== '' && 
+    productosFiltrados.length === 0 && 
+    !buscando;
 
   return {
     terminoBusqueda,
     setTerminoBusqueda,
     productosFiltrados,
-    buscando: false // No necesitamos estado de "buscando" para filtrado local
+    buscando,
+    noSeEncontraronProductos,
+    hayResultados: productosFiltrados.length > 0
   };
 };

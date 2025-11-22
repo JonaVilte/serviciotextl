@@ -22,7 +22,9 @@ const ListaDeProductos = () => {
   const { 
     terminoBusqueda, 
     setTerminoBusqueda,
-    productosFiltrados 
+    productosFiltrados,
+    buscando,
+    noSeEncontraronProductos
   } = useBuscarProductos({ productos })
   
   const { 
@@ -61,31 +63,41 @@ const ListaDeProductos = () => {
         umbralBajoStock={umbralBajoStock}
       />
 
-      {/* Información de búsqueda */}
-      {terminoBusqueda ? (
+      {/* Indicador de búsqueda */}
+      {buscando && (
+        <View style={styles.infoBusqueda}>
+          <ActivityIndicator size="small" color={ACCENT_COLOR} />
+        </View>
+      )}
+
+      {/* Información de resultados de búsqueda */}
+      {!buscando && terminoBusqueda && (
         <View style={styles.infoBusqueda}>
           <Text style={styles.textoInfo}>
-            {productosFiltrados.length === 0 
-              ? 'No se encontraron productos' 
+            {noSeEncontraronProductos 
+              ? `No se encontraron productos para "${terminoBusqueda}"`
               : `Encontrados: ${productosFiltrados.length} producto${productosFiltrados.length !== 1 ? 's' : ''}`
             }
           </Text>
         </View>
-      ) : null}
+      )}
 
       {/* Lista de productos */}
-      {productosFiltrados.length === 0 && terminoBusqueda ? (
+      {noSeEncontraronProductos ? (
         <View style={styles.centrado}>
           <Text style={styles.textoVacio}>
             No se encontraron productos que coincidan con "{terminoBusqueda}"
           </Text>
         </View>
-      ) : productosFiltrados.length === 0 ? (
+      ) : productosFiltrados.length === 0 && !terminoBusqueda ? (
         <View style={styles.centrado}>
           <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
         </View>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listaContenido}
+        >
           {productosFiltrados.map((producto) => (
             <TarjetaProducto 
               key={producto.id} 
@@ -102,6 +114,10 @@ const ListaDeProductos = () => {
 const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
+    padding: 16,
+  },
+  listaContenido: {
+    paddingBottom: 16,
   },
   centrado: {
     flex: 1,
@@ -130,8 +146,11 @@ const styles = StyleSheet.create({
     fontFamily: ShinySundayFont,
   },
   infoBusqueda: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     marginBottom: 12,
+    gap: 8,
   },
   textoInfo: {
     color: "#059669",
