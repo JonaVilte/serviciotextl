@@ -28,16 +28,17 @@ const InformacionPedido = ({ fecha_de_emision, precio }: Props) => {
 
 const styles = StyleSheet.create({
   contenedor: {
-    gap: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   fecha: {
-    fontSize: 18,
+    fontSize: 21,
     color: "#1f2937",
     fontWeight: "600",
     marginTop: -4,
   },
   precio: {
-    fontSize: 20,
+    fontSize: 23,
     color: "#059669",
     fontWeight: "700",
     marginTop: 4,

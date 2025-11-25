@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   etiquetaCliente: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#6b7280",
     fontWeight: "500",
   },
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
   },
   textoCliente: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#1f2937",
     fontWeight: "500",
   },

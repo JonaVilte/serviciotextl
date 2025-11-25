@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   statusText: {
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: "500",
   },
   dropdownMenu: {
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3f4f6",
   },
   textoMenu: {
-    fontSize: 14,
+    fontSize: 17,
     color: "#374151",
   },
 })

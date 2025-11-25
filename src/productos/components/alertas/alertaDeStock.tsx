@@ -50,14 +50,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titulo: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: '#dc2626',
     marginBottom: 4,
     fontFamily: ShinySundayFont,
   },
   mensaje: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#991b1b',
     fontFamily: ShinySundayFont,
     lineHeight: 20,

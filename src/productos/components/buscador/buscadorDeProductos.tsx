@@ -25,7 +25,7 @@ const ShinySundayFont = Platform.select({
 export default function BuscadorProductos({ 
   terminoBusqueda, 
   onTerminoChange,
-  placeholder = "Buscar productos por nombre..." 
+  placeholder = "Buscar productos..." 
 }: BuscadorProductosProps) {
   
   const limpiarBusqueda = () => {

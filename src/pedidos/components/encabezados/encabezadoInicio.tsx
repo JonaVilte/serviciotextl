@@ -48,7 +48,6 @@ const EncabezadoInicio = ({ nombreUsuario, rol = "Usuario" }: Props) => {
         </View>
 
         <View style={styles.textos}>
-          <Text style={styles.saludo}>Bienvenido,</Text>
           <Text style={styles.nombre}>{nombreUsuario}</Text>
           <Text style={styles.rol}>{rol}</Text>
         </View>

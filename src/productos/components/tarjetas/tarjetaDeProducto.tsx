@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   nombre: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: "bold",
     color: "#1f2937",
     fontFamily: ShinySundayFont,
@@ -156,13 +156,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   precio: {
-    fontSize: 20,
+    fontSize: 27,
     fontWeight: "bold",
     color: ACCENT_COLOR,
     fontFamily: ShinySundayFont,
   },
   descripcion: {
-    fontSize: 14,
+    fontSize: 19,
     color: "#6b7280",
     marginBottom: 12,
     fontFamily: ShinySundayFont,
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textoDetalle: {
-    fontSize: 13,
+    fontSize: 17,
     color: "#374151",
     fontFamily: ShinySundayFont,
   },
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   textoTag: {
-    fontSize: 12,
+    fontSize: 16,
     color: ACCENT_COLOR,
     fontWeight: "600",
     fontFamily: ShinySundayFont,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   textoTagAlerta: {
-    fontSize: 12,
+    fontSize: 16,
     color: "#dc2626",
     fontWeight: "600",
     fontFamily: ShinySundayFont,
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     borderColor: "#fecaca",
   },
   textoAlerta: {
-    fontSize: 13,
+    fontSize: 16,
     color: "#dc2626",
     fontWeight: "500",
     fontFamily: ShinySundayFont,

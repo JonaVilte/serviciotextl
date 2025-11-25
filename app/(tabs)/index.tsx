@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   titulo: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#1f2937",
     fontFamily: ShinySundayFont,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   textoBotonAgregar: {
     color: "#FFFFFF",
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "600",
     fontFamily: ShinySundayFont,
   },
