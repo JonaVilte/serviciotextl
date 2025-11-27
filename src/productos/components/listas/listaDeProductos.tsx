@@ -18,14 +18,14 @@ const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" }
 const ACCENT_COLOR = "#059669"
 
 const ListaDeProductos = () => {
-  const { productos, loading, error, actualizarStock } = usarProductos()
+  const { loading, error, actualizarStock } = usarProductos()
   const { 
     terminoBusqueda, 
     setTerminoBusqueda,
     productosFiltrados,
     buscando,
     noSeEncontraronProductos
-  } = useBuscarProductos({ productos })
+  } = useBuscarProductos()
   
   const { 
     totalBajoStock,

@@ -13,38 +13,44 @@ type Producto = {
   color: string;
 };
 
-export const useBuscarProductos = () => {
+export const useBuscarProduc = () => {
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
   const [terminoDebounce, setTerminoDebounce] = useState('');
   const [buscando, setBuscando] = useState(false);
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [cargandoProductos, setCargandoProductos] = useState(true);
+  const [cargandoProductos, setCargandoProductos] = useState(false);
 
-  // Cargar todos los productos al inicializar
+  // Buscar productos en Supabase cuando cambia el término con debounce
   useEffect(() => {
-    const cargarProductos = async () => {
+    const buscarEnSupabase = async () => {
+      if (!terminoDebounce.trim()) {
+        setProductos([]);
+        setCargandoProductos(false);
+        return;
+      }
+
       try {
         setCargandoProductos(true);
         const { data, error } = await supabase
           .from('productos')
-          .select('*');
+          .select('*')
+          .ilike('nombre', `%${terminoDebounce}%`);
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         setProductos(data || []);
       } catch (error) {
-        console.error('Error cargando productos:', error);
+        console.error('Error buscando productos:', error);
+        setProductos([]);
       } finally {
         setCargandoProductos(false);
       }
     };
 
-    cargarProductos();
-  }, []);
+    buscarEnSupabase();
+  }, [terminoDebounce]);
 
-  // Debounce para delay en la búsqueda
+  // Debounce para el término de búsqueda
   useEffect(() => {
     if (terminoBusqueda.trim() === '') {
       setTerminoDebounce('');
@@ -65,18 +71,10 @@ export const useBuscarProductos = () => {
     };
   }, [terminoBusqueda]);
 
-  // Filtrado local de productos
+  // Filtrado local (aunque ya viene filtrado de Supabase, mantenemos la estructura)
   const productosFiltrados = useMemo(() => {
-    if (!terminoDebounce.trim()) {
-      return productos;
-    }
-
-    const terminoLower = terminoDebounce.toLowerCase().trim();
-    
-    return productos.filter(producto => 
-      producto.nombre.toLowerCase().includes(terminoLower)
-    );
-  }, [productos, terminoDebounce]);
+    return productos;
+  }, [productos]);
 
   const noSeEncontraronProductos = 
     terminoDebounce.trim() !== '' && 
