@@ -14,7 +14,7 @@ import { useBuscarProductos } from "../../hooks/usarBuscarProductos"
 import { useBajoStock } from "../../hooks/bajoStock"
 import AlertaBajoStock from "../alertas/alertaDeStock"
 
-const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
+const ShinySundayFont = Platform.select({ ios: "System", android: "Roboto" })
 const ACCENT_COLOR = "#059669"
 
 const ListaDeProductos = () => {

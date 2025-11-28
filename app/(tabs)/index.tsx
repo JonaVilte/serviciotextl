@@ -8,7 +8,7 @@ import EncabezadoInicio from "@/src/pedidos/components/encabezados/encabezadoIni
 // Reemplaza estos componentes con los tuyos o mantén los placeholders
 import ListaDeProductos from "@/src/productos/components/listas/listaDeProductos"
 
-const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
+const ShinySundayFont = Platform.select({ ios: "System", android: "Roboto" })
 const ACCENT_COLOR = "#059669"
 
 export default function HomeScreen() {

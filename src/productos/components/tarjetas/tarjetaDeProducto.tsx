@@ -6,7 +6,7 @@ import { AlertTriangle } from "lucide-react-native"
 import { useState } from "react"
 import ModalEditorStock from "../iditar/modalParaEditaStock"
 
-const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
+const ShinySundayFont = Platform.select({ ios: "System", android: "Roboto" })
 const ACCENT_COLOR = "#059669"
 const UMBRAL_BAJO_STOCK = 10
 

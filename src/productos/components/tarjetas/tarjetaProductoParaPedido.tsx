@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableOpacity, Platform } from "react-native"
 import { Text } from "@/components/ui/text"
 import { Plus } from "lucide-react-native"
 
-const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
+const ShinySundayFont = Platform.select({ ios: "System", android: "Roboto" })
 
 type TarjetaProductoParaPedidoProps = {
   nombre: string

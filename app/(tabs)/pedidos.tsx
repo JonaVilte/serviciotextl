@@ -4,7 +4,7 @@ import { useRouter } from "expo-router"
 import ListaDePedidosAdmin from "@/src/pedidos/components/listasEItems/listaDePedidosParaAdm"
 import { ArrowLeft } from "lucide-react-native"
 
-const ShinySundayFont = Platform.select({ ios: "System", android: "sans-serif" })
+const ShinySundayFont = Platform.select({ ios: "System", android: "Roboto" })
 
 export default function PedidosScreen() {
   const router = useRouter()

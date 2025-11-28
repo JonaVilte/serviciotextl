@@ -4,6 +4,11 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Platform, Text as RNText, type Role } from 'react-native';
 
+const APP_FONT = Platform.select({
+  ios: 'System',
+  android: 'Roboto',
+});
+
 const textVariants = cva(
   cn(
     'text-foreground text-base',
@@ -43,7 +48,6 @@ const textVariants = cva(
 );
 
 type TextVariantProps = VariantProps<typeof textVariants>;
-
 type TextVariant = NonNullable<TextVariantProps['variant']>;
 
 const ROLE: Partial<Record<TextVariant, Role>> = {
@@ -68,6 +72,7 @@ function Text({
   className,
   asChild = false,
   variant = 'default',
+  style,
   ...props
 }: React.ComponentProps<typeof RNText> &
   TextVariantProps &
@@ -76,9 +81,11 @@ function Text({
   }) {
   const textClass = React.useContext(TextClassContext);
   const Component = asChild ? Slot.Text : RNText;
+
   return (
     <Component
       className={cn(textVariants({ variant }), textClass, className)}
+      style={[{ fontFamily: APP_FONT }, style]}
       role={variant ? ROLE[variant] : undefined}
       aria-level={variant ? ARIA_LEVEL[variant] : undefined}
       {...props}
