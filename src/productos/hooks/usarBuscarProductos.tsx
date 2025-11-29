@@ -18,16 +18,27 @@ export const useBuscarProductos = () => {
   const [terminoDebounce, setTerminoDebounce] = useState('');
   const [buscando, setBuscando] = useState(false);
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [cargandoProductos, setCargandoProductos] = useState(true);
+  const [cargandoProductos, setCargandoProductos] = useState(false);
 
-  // Cargar todos los productos al inicializar
   useEffect(() => {
-    const cargarProductos = async () => {
+    if (terminoBusqueda.trim() === '') {
+      setTerminoDebounce('');
+      setBuscando(false);
+      setProductos([]); 
+      return;
+    }
+
+    setBuscando(true);
+    setCargandoProductos(true);
+    
+    const timer = setTimeout(async () => {
       try {
-        setCargandoProductos(true);
+        setTerminoDebounce(terminoBusqueda);
+        
         const { data, error } = await supabase
           .from('productos')
-          .select('*');
+          .select('*')
+          .ilike('nombre', `%${terminoBusqueda}%`);
 
         if (error) {
           throw error;
@@ -35,37 +46,20 @@ export const useBuscarProductos = () => {
 
         setProductos(data || []);
       } catch (error) {
-        console.error('Error cargando productos:', error);
+        console.error('Error buscando productos:', error);
       } finally {
+        setBuscando(false);
         setCargandoProductos(false);
       }
-    };
-
-    cargarProductos();
-  }, []);
-
-  // Debounce para delay en la búsqueda
-  useEffect(() => {
-    if (terminoBusqueda.trim() === '') {
-      setTerminoDebounce('');
-      setBuscando(false);
-      return;
-    }
-
-    setBuscando(true);
-    
-    const timer = setTimeout(() => {
-      setTerminoDebounce(terminoBusqueda);
-      setBuscando(false);
     }, 500);
 
     return () => {
       clearTimeout(timer);
       setBuscando(false);
+      setCargandoProductos(false);
     };
   }, [terminoBusqueda]);
 
-  // Filtrado local de productos
   const productosFiltrados = useMemo(() => {
     if (!terminoDebounce.trim()) {
       return productos;

@@ -18,7 +18,9 @@ const ShinySundayFont = Platform.select({ ios: "System", android: "Roboto" })
 const ACCENT_COLOR = "#059669"
 
 const ListaDeProductos = () => {
-  const { loading, error, actualizarStock } = usarProductos()
+  // CORRECCIÓN: Extraer 'productos' del hook usarProductos
+  const { productos, loading, error, actualizarStock } = usarProductos()
+  
   const { 
     terminoBusqueda, 
     setTerminoBusqueda,
@@ -82,30 +84,53 @@ const ListaDeProductos = () => {
         </View>
       )}
 
-      {/* Lista de productos */}
+      {/* CORRECCIÓN: Lógica para mostrar productos */}
       {noSeEncontraronProductos ? (
         <View style={styles.centrado}>
           <Text style={styles.textoVacio}>
             No se encontraron productos que coincidan con "{terminoBusqueda}"
           </Text>
         </View>
-      ) : productosFiltrados.length === 0 && !terminoBusqueda ? (
-        <View style={styles.centrado}>
-          <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
-        </View>
+      ) : terminoBusqueda ? (
+        // Cuando hay búsqueda, mostrar productos filtrados
+        productosFiltrados.length > 0 ? (
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listaContenido}
+          >
+            {productosFiltrados.map((producto) => (
+              <TarjetaProducto 
+                key={producto.id} 
+                producto={producto}
+                onActualizarStock={actualizarStock}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.centrado}>
+            <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
+          </View>
+        )
       ) : (
-        <ScrollView 
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listaContenido}
-        >
-          {productosFiltrados.map((producto) => (
-            <TarjetaProducto 
-              key={producto.id} 
-              producto={producto}
-              onActualizarStock={actualizarStock}
-            />
-          ))}
-        </ScrollView>
+        // Cuando NO hay búsqueda, mostrar TODOS los productos
+        productos.length > 0 ? (
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listaContenido}
+          >
+            {productos.map((producto) => (
+              <TarjetaProducto 
+                key={producto.id} 
+                producto={producto}
+                onActualizarStock={actualizarStock}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.centrado}>
+            <Text style={styles.textoVacio}>No hay productos disponibles.</Text>
+          </View>
+        )
       )}
     </View>
   )
