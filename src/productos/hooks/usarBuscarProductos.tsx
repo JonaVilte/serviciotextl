@@ -24,17 +24,17 @@ export const useBuscarProductos = () => {
     if (terminoBusqueda.trim() === '') {
       setTerminoDebounce('');
       setBuscando(false);
-      setProductos([]); 
+      setProductos([]);
       return;
     }
 
     setBuscando(true);
     setCargandoProductos(true);
-    
+
     const timer = setTimeout(async () => {
       try {
         setTerminoDebounce(terminoBusqueda);
-        
+
         const { data, error } = await supabase
           .from('productos')
           .select('*')
@@ -66,15 +66,13 @@ export const useBuscarProductos = () => {
     }
 
     const terminoLower = terminoDebounce.toLowerCase().trim();
-    
-    return productos.filter(producto => 
-      producto.nombre.toLowerCase().includes(terminoLower)
-    );
+
+    return productos.filter((producto) => producto.nombre.toLowerCase().includes(terminoLower));
   }, [productos, terminoDebounce]);
 
-  const noSeEncontraronProductos = 
-    terminoDebounce.trim() !== '' && 
-    productosFiltrados.length === 0 && 
+  const noSeEncontraronProductos =
+    terminoDebounce.trim() !== '' &&
+    productosFiltrados.length === 0 &&
     !buscando &&
     !cargandoProductos;
 
@@ -87,6 +85,6 @@ export const useBuscarProductos = () => {
     buscando: buscando || cargandoProductos,
     noSeEncontraronProductos,
     hayResultados,
-    error: null
+    error: null,
   };
 };
